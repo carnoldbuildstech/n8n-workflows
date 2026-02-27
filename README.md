@@ -11,10 +11,10 @@ Automated customer inquiry system for a towing company.
 - **What it does:** Sends an urgent dispatch alert to the business owner and a professional confirmation email to the customer — automatically, 24/7
 
 ### Roast Bot
-A fun AI-powered roast generator.
+A fun AI-powered chatbot that lets people ask questions about me and get roast-style responses.
 - **Trigger:** Chat message
 - **Flow:** Chat Trigger → AI Agent (Claude) + Simple Memory
-- **What it does:** Roasts the user based on what they say, remembers the conversation
+- **What it does:** Responds to questions about the creator (me) with funny, personalized jokes — roasting myself based on information the bot already knows about me
 
 ### Lead Enrichment Bot
 Automated lead research and personalized outreach.
