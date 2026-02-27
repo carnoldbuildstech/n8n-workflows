@@ -1,0 +1,158 @@
+{
+  "name": "Lead Enrichment Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5b4d4ed8-9592-4e2e-9892-c1d1bc5b657b",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a9653188-1c4d-448f-9a5c-b3a8a7e63085",
+      "name": "Webhook",
+      "webhookId": "5b4d4ed8-9592-4e2e-9892-c1d1bc5b657b"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a sales outreach assistant. A new lead has come in.\n\nLead name: {{$('Webhook').item.json.body.name}}\nLead email: {{$('Webhook').item.json.body.email}}\nCompany domain: {{$('HTTP Request').item.json.data.domain}}\n\nWrite a short, friendly, personalized cold outreach email to this lead. \nKeep it under 5 sentences. Don't be pushy. End with a simple question to start a conversation.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "1212bd6b-d3bb-4729-a058-37491b3bed86",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-5-20250929",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        208
+      ],
+      "id": "f1f6c9a3-1508-4fee-a7d9-15926f7afc6b",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "tKupxyvlamegvGCk",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hunter.io/v2/email-finder?domain={{$json.body.email.split('@')[1]}}&first_name={{$json.body.name.split(' ')[0]}}&last_name={{$json.body.name.split(' ')[1]}}&api_key=09936c0baee505fcb4a97e43db135989798fcde6",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        0,
+        -192
+      ],
+      "id": "3f958825-05f2-4b15-bdfd-3f7508f3223a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$('Webhook').item.json.body.email}}",
+        "subject": "=Quick question, {{$('Webhook').item.json.body.name.split(' ')[0]}}",
+        "message": "={{$json.output}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "0ab404e1-95ce-4351-be7e-317f39238221",
+      "name": "Send a message",
+      "webhookId": "76db95d6-bf5e-4b26-a6c2-31dcf3035c69",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "v0Gl4rtl3IvxYszy",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e5a125ac-70a2-4ed4-a4fb-3cfc96e7163e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
+  },
+  "id": "A9iZ5gC7eCKUwuXm",
+  "tags": []
+}
