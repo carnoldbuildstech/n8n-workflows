@@ -59,7 +59,7 @@
     },
     {
       "parameters": {
-        "url": "=https://api.hunter.io/v2/email-finder?domain={{$json.body.email.split('@')[1]}}&first_name={{$json.body.name.split(' ')[0]}}&last_name={{$json.body.name.split(' ')[1]}}&api_key=09936c0baee505fcb4a97e43db135989798fcde6",
+        "url": "=https://api.hunter.io/v2/email-finder?domain={{$json.body.email.split('@')[1]}}&first_name={{$json.body.name.split(' ')[0]}}&last_name={{$json.body.name.split(' ')[1]}}&api_key=YOUR_HUNTER_API_KEY_HERE",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
