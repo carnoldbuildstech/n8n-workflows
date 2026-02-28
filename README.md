@@ -28,12 +28,19 @@ General-purpose AI customer service automation.
 - **Flow:** AI Agent (Claude) handles responses
 - **What it does:** Handles customer inquiries with AI
 
+### 3D Print Finder
+AI-powered 3D print file search assistant.
+- **Trigger:** Chat message (bookmarked URL)
+- **Flow:** Chat Trigger → AI Agent (Claude) + Simple Memory + Tavily Search
+- **What it does:** User describes what they want to 3D print, Claude searches Printables.com and Thingiverse.com automatically and returns the top matching STL file links — no manual searching required
+
 ## Tools Used
 - [n8n](https://n8n.io) — Workflow automation
 - [Claude](https://anthropic.com) — AI language model
 - Gmail — Email delivery
 - Hunter.io — Lead enrichment API
 - Tally — Form trigger
+- Tavily — AI search API
 
 ## About
 Built as part of my transition into AI Workflow Architecture. These are real, working automations — not demos.
