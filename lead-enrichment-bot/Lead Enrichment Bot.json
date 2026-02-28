@@ -59,7 +59,9 @@
     },
     {
       "parameters": {
-        "url": "=https://api.hunter.io/v2/email-finder?domain={{$json.body.email.split('@')[1]}}&first_name={{$json.body.name.split(' ')[0]}}&last_name={{$json.body.name.split(' ')[1]}}&api_key=YOUR_HUNTER_API_KEY_HERE",
+        "url": "=https://api.hunter.io/v2/email-finder?domain={{$json.body.email.split('@')[1]}}&first_name={{$json.body.name.split(' ')[0]}}&last_name={{$json.body.name.split(' ')[1]}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -69,7 +71,13 @@
         -192
       ],
       "id": "3f958825-05f2-4b15-bdfd-3f7508f3223a",
-      "name": "HTTP Request"
+      "name": "HTTP Request",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "fkVyaLnn7wT8FWy7",
+          "name": "Hunter.io API key"
+        }
+      }
     },
     {
       "parameters": {
@@ -148,7 +156,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "e5a125ac-70a2-4ed4-a4fb-3cfc96e7163e",
+  "versionId": "02f29c9c-553f-4efd-99fe-6ee4ee110363",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
