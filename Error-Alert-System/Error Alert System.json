@@ -1,0 +1,67 @@
+{
+  "name": "Error Alert System",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bb073da0-47fe-4d5b-be7c-afb940163d02",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "CArnoldbuildstech@gmail.com",
+        "subject": "=n8n Workflow Failed: {{ $json.workflow.name }}",
+        "emailType": "text",
+        "message": "=A workflow on your n8n account has failed.\n\nWorkflow: {{ $json.workflow.name }}\nFailed Node: {{ $json.execution.lastNodeExecuted }}\nTime: {{ new Date($json.execution.error.timestamp).toLocaleString('en-US', {timeZone: 'America/New_York'}) }}\n\nError: {{ $json.execution.error.message }}\nDetails: {{ $json.execution.error.description }}\n\nView the failed execution:\n{{ $json.execution.url }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "09275c89-b0d9-4225-80a9-059cbde5af78",
+      "name": "Send a message",
+      "webhookId": "4175b19c-01da-4f8f-bd7d-aaae609bc5b3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "v0Gl4rtl3IvxYszy",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "1970621f-0613-40bc-a0e0-3cae92149151",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
+  },
+  "id": "eAreJSew25krScJo",
+  "tags": []
+}

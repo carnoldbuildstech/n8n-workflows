@@ -77,7 +77,8 @@
           "id": "fkVyaLnn7wT8FWy7",
           "name": "Hunter.io API key"
         }
-      }
+      },
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -95,6 +96,30 @@
       "id": "0ab404e1-95ce-4351-be7e-317f39238221",
       "name": "Send a message",
       "webhookId": "76db95d6-bf5e-4b26-a6c2-31dcf3035c69",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "v0Gl4rtl3IvxYszy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "carnoldbuildstech@gmail.com",
+        "subject": "Lead Enrichment Failed",
+        "emailType": "text",
+        "message": "Hunter.io could not find an email for this lead. Check the workflow execution for details.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        352,
+        -176
+      ],
+      "id": "b54d2b3c-43f5-42d2-aa87-665258a86d4d",
+      "name": "Send a message1",
+      "webhookId": "9e49cc4c-1a7e-48d8-b54c-b4a1837d34ea",
       "credentials": {
         "gmailOAuth2": {
           "id": "v0Gl4rtl3IvxYszy",
@@ -135,6 +160,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -150,13 +182,16 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "eAreJSew25krScJo",
+    "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "02f29c9c-553f-4efd-99fe-6ee4ee110363",
+  "versionId": "580db013-0dc7-47ca-9c39-6020029e0a4c",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
