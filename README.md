@@ -21,6 +21,13 @@ Automated lead research and personalized outreach.
 - **Trigger:** Webhook with lead name + email
 - **Flow:** Webhook → HTTP Request (Hunter.io API) → AI Agent (Claude) → Gmail
 - **What it does:** Enriches lead data with company info, Claude writes a personalized outreach email, sends it automatically
+- **Error handling:** Hunter.io failures route to a dedicated Gmail alert instead of crashing the workflow (Level 2 error output pin)
+
+### Error Alert System
+Account-wide error monitoring for all workflows.
+- **Trigger:** Any workflow error across the entire n8n account
+- **Flow:** Error Trigger → Gmail
+- **What it does:** Instantly emails Chris when any workflow fails — includes workflow name, failed node, error message, timestamp (Eastern), and a direct link to the execution
 
 ### AI Customer Service Agent
 General-purpose AI customer service automation.
