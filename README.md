@@ -7,8 +7,9 @@ AI-powered automation workflows built with n8n by Chris Arnold — AI Workflow A
 ### Arnold Towing — Customer Inquiry Responder
 Automated customer inquiry system for a towing company.
 - **Trigger:** Tally form submission
-- **Flow:** Webhook → AI Agent (Claude) → 2x Gmail
+- **Flow:** Webhook → IF (business hours check) → AI Agent (Claude) → 2x Gmail
 - **What it does:** Sends an urgent dispatch alert to the business owner and a professional confirmation email to the customer — automatically, 24/7
+- **Conditional logic:** Checks if inquiry is within business hours (7am–7pm). After hours → sends a direct after-hours response instead of running the AI Agent
 
 ### Roast Bot
 A fun AI-powered chatbot that lets people ask questions about me and get roast-style responses.
