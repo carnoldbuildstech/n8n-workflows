@@ -3,54 +3,21 @@
   "nodes": [
     {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "3d13d3b2-c40a-4e3d-880b-02d21983e996",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -320,
-        16
-      ],
-      "id": "e17eab15-554f-423a-b154-243032f97bf9",
-      "name": "Webhook",
-      "webhookId": "3d13d3b2-c40a-4e3d-880b-02d21983e996"
-    },
-    {
-      "parameters": {
-        "promptType": "define",
-        "text": "=You are a dispatcher for Arnold Towing and Recovery in Syracuse, NY. A customer has submitted a service request.\n\nCustomer Details:\n- Name: {{ $('Webhook').item.json.body.data.fields[0].value }}\n- Phone: {{ $('Webhook').item.json.body.data.fields[1].value }}\n- Location: {{ $('Webhook').item.json.body.data.fields[3].value }}\n- Request: {{ $('Webhook').item.json.body.data.fields[4].value }}\n\nWrite a short urgent dispatch alert for the Arnold Towing team. Include the customer's name, phone number, location, and what they need. Keep it under 4 sentences. End with \"CALL IMMEDIATELY.\"\n",
-        "options": {
-          "systemMessage": "You are the automated dispatch system for Arnold Towing and Recovery, a professional towing and repossession company based in Syracuse, NY. You handle urgent customer service requests. Customers contacting you are often stressed or stranded — your tone must be calm, professional, and reassuring. Always treat every request as urgent. Never make up ETAs or specific pricing.\n"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 3.1,
-      "position": [
-        208,
-        0
-      ],
-      "id": "14709490-b8d9-438d-96cb-8254e81a88d2",
-      "name": "AI Agent"
-    },
-    {
-      "parameters": {
         "model": {
           "__rl": true,
+          "value": "claude-sonnet-4-6",
           "mode": "list",
-          "value": "claude-sonnet-4-5-20250929",
-          "cachedResultName": "Claude Sonnet 4.5"
+          "cachedResultName": "Claude Sonnet 4.6"
         },
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.3,
       "position": [
-        -240,
-        288
+        -400,
+        16
       ],
-      "id": "8d4ab683-1fd9-4d68-a6b2-d8696144539f",
+      "id": "7c7dbf3d-c9fe-4589-90dc-5c60f73506a9",
       "name": "Anthropic Chat Model",
       "credentials": {
         "anthropicApi": {
@@ -61,8 +28,58 @@
     },
     {
       "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-6",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.6"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        432
+      ],
+      "id": "e2968f36-87e2-408b-99eb-e46f7db5729c",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "tKupxyvlamegvGCk",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-6",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.6"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        240
+      ],
+      "id": "1f16186a-8285-4770-843b-5f49d2ea60bd",
+      "name": "Anthropic Chat Model2",
+      "credentials": {
+        "anthropicApi": {
+          "id": "tKupxyvlamegvGCk",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
         "sendTo": "carnoldbuildstech@gmail.com",
-        "subject": "=🚨 INCOMING TOWING REQUEST - {{ $('Webhook').item.json.body.data.fields[0].value }} - CALL NOW\n",
+        "subject": "New Towing Request - AFTER HOURS",
         "emailType": "text",
         "message": "={{ $json.output }}",
         "options": {}
@@ -70,12 +87,12 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        560,
-        0
+        320,
+        48
       ],
-      "id": "20fd4d05-52ca-436b-a11d-94efdefaf32b",
-      "name": "Send a message",
-      "webhookId": "ce92cbb1-9a9e-4781-851c-686173e904ba",
+      "id": "ebcff2ab-83eb-4f97-b5cb-b2183816b51b",
+      "name": "Owner Email AH",
+      "webhookId": "0742ab8d-6570-4d95-90de-c18168bde57c",
       "credentials": {
         "gmailOAuth2": {
           "id": "v0Gl4rtl3IvxYszy",
@@ -85,27 +102,197 @@
     },
     {
       "parameters": {
-        "sendTo": "={{ $('Webhook').item.json.body.data.fields[2].value }}\n",
-        "subject": "=Arnold Towing and Recovery - We're On It, {{ $('Webhook').item.json.body.data.fields[0].value }}!\n",
+        "sendTo": "carnoldbuildstech@gmail.com",
+        "subject": "New Towing Request - Business Hours",
         "emailType": "text",
-        "message": "=Hi {{ $('Webhook').item.json.body.data.fields[0].value }},\n\nWe received your towing request at {{ $('Webhook').item.json.body.data.fields[3].value }}. A member of the Arnold Towing team will call you at {{ $('Webhook').item.json.body.data.fields[1].value }} within 10 minutes.\n\nThank you for choosing Arnold Towing and Recovery - Syracuse, NY.\n",
+        "message": "={{ $json.output }}",
         "options": {}
       },
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        768,
-        0
+        -64,
+        -192
       ],
-      "id": "67f92711-3b32-4772-a942-af3256a70366",
-      "name": "Send a message1",
-      "webhookId": "d3901090-0cac-4fd2-a44d-cbf4b487109d",
+      "id": "868600b9-6e2d-4467-b77f-23f5f54c2386",
+      "name": "Owner Email BH",
+      "webhookId": "fca1614e-ab5e-4e41-b535-2c24198fae5d",
       "credentials": {
         "gmailOAuth2": {
           "id": "v0Gl4rtl3IvxYszy",
           "name": "Gmail account"
         }
       }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook: Tally Form').item.json.body.data.fields[2].value }}",
+        "subject": "Your Towing Request - Arnold Towing and Recovery",
+        "emailType": "text",
+        "message": "=Hi {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }},  Thank you for reaching out to Arnold Towing and Recovery.  We've received your request and a team member will be in  touch with you shortly.  If this is an emergency, please call us directly.  — Arnold Towing and Recovery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        144,
+        -192
+      ],
+      "id": "344b5715-0e07-4341-85ac-e869a3c6367c",
+      "name": "Customer Email BH",
+      "webhookId": "024b7b8d-97d6-438c-a69a-826904a657a3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "v0Gl4rtl3IvxYszy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook: Tally Form').item.json.body.data.fields[2].value }}",
+        "subject": "Your Towing Request - Arnold Towing and Recovery",
+        "emailType": "text",
+        "message": "=Hi {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }},  Thank you for reaching out to Arnold Towing and Recovery.  We've received your request and will contact you first thing  next business morning.  If this is an emergency, please call us directly.  — Arnold Towing and Recovery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        528,
+        48
+      ],
+      "id": "e377b3ab-6209-407c-b811-ed94a52ef926",
+      "name": "Customer Email AH",
+      "webhookId": "00454b61-5580-4809-9dda-9187c3a9a65d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "v0Gl4rtl3IvxYszy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "carnoldbuildstech@gmail.com",
+        "subject": "New Towing Request - WEEKEND",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        448
+      ],
+      "id": "c40cadb4-a1ba-4d56-9724-99282878e42e",
+      "name": "Owner Email W/E",
+      "webhookId": "0742ab8d-6570-4d95-90de-c18168bde57c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "v0Gl4rtl3IvxYszy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook: Tally Form').item.json.body.data.fields[2].value }}",
+        "subject": "Your Towing Request - Arnold Towing and Recovery",
+        "emailType": "text",
+        "message": "=Hi {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }},\n\nThank you for reaching out to Arnold Towing and Recovery.\nWe've received your request and will contact you first thing \nMonday morning.\n\nIf this is an emergency, please call us directly.\n\n— Arnold Towing and Recovery\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        448
+      ],
+      "id": "51750180-f4b0-4359-a1c8-d60b1845be6f",
+      "name": "Customer Email W/E",
+      "webhookId": "00454b61-5580-4809-9dda-9187c3a9a65d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "v0Gl4rtl3IvxYszy",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a dispatch assistant for Arnold Towing and Recovery. \nA new service request just came in during business hours.\n\nWrite a short urgent dispatch alert for the owner. Include:\n- Customer name\n- Phone number\n- Location\n- Service needed\n\nCustomer details:\nName: {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }}\nPhone: {{ $('Webhook: Tally Form').item.json.body.data.fields[1].value }}\nLocation: {{ $('Webhook: Tally Form').item.json.body.data.fields[3].value }}\nService: {{ $('Webhook: Tally Form').item.json.body.data.fields[4].value }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -400,
+        -176
+      ],
+      "id": "d799ca5d-2ca2-4aea-84fe-9a59f6eeaba5",
+      "name": "AI Agent BH"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a dispatch assistant for Arnold Towing and Recovery.\nA service request came in AFTER BUSINESS HOURS.\n\nWrite a brief alert for the owner. Note it came in after hours \nand the customer will be contacted first thing next business morning.\n\nCustomer details:\nName: {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }}\nPhone: {{ $('Webhook: Tally Form').item.json.body.data.fields[1].value }}\nLocation: {{ $('Webhook: Tally Form').item.json.body.data.fields[3].value }}\nService: {{ $('Webhook: Tally Form').item.json.body.data.fields[4].value }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -32,
+        48
+      ],
+      "id": "3351567c-0917-4003-962e-dea7b464dace",
+      "name": "AI Agent AH"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a dispatch assistant for Arnold Towing and Recovery.\nA service request came in over the WEEKEND.\n\nWrite a brief alert for the owner. Note it came in on the weekend\nand the customer will be contacted first thing Monday morning.\n\nCustomer details:\nName: {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }}\nPhone: {{ $('Webhook: Tally Form').item.json.body.data.fields[1].value }}\nLocation: {{ $('Webhook: Tally Form').item.json.body.data.fields[3].value }}\nService: {{ $('Webhook: Tally Form').item.json.body.data.fields[4].value }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -464,
+        240
+      ],
+      "id": "4a82a869-e6e2-401d-83f0-e94f106c41a4",
+      "name": "AI Agent W/E"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "3d13d3b2-c40a-4e3d-880b-02d21983e996",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1312,
+        0
+      ],
+      "id": "e17eab15-554f-423a-b154-243032f97bf9",
+      "name": "Webhook: Tally Form",
+      "webhookId": "3d13d3b2-c40a-4e3d-880b-02d21983e996"
+    },
+    {
+      "parameters": {
+        "jsCode": "const createdAt = items[0].json.body.createdAt;\nconst date = new Date(createdAt);\nconst estHour = (date.getUTCHours() - 5 + 24) % 24;\nconst estDay = new Date(date.getTime() - 5 * 3600000).getUTCDay();\n\nlet timeCategory;\nif (estDay === 0 || estDay === 6) {\n  timeCategory = 'weekend';\n} else if (estHour >= 7 && estHour < 19) {\n  timeCategory = 'business';\n} else {\n  timeCategory = 'afterhours';\n}\n\nreturn [{ json: { ...items[0].json, timeCategory: timeCategory } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1264,
+        224
+      ],
+      "id": "31e0f85c-20c7-45b3-9f90-b6e24a982afb",
+      "name": "Code in JavaScript"
     },
     {
       "parameters": {
@@ -113,126 +300,222 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "loose",
+            "typeValidation": "strict",
             "version": 3
           },
           "conditions": [
             {
-              "id": "d9228be7-d9df-4f22-96c7-e1dc51718e27",
-              "leftValue": "={{ new Date().getHours() }}\n",
-              "rightValue": 7,
+              "id": "697ad1c4-4f5b-47eb-901d-f06f180b8b88",
+              "leftValue": "={{ $json.timeCategory }}",
+              "rightValue": "afterhours",
               "operator": {
-                "type": "number",
-                "operation": "gte"
-              }
-            },
-            {
-              "id": "d1ebf323-eaa6-461a-a086-922e1d9c4bbc",
-              "leftValue": "={{ new Date().getHours() }}",
-              "rightValue": 19,
-              "operator": {
-                "type": "number",
-                "operation": "lte"
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
               }
             }
           ],
           "combinator": "and"
         },
-        "looseTypeValidation": true,
         "options": {}
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -112,
-        16
+        -1056,
+        224
       ],
-      "id": "0ebf8560-f821-49d8-8944-fcb2d0a704a2",
-      "name": "If"
+      "id": "1ce1c823-9856-4e8d-8293-bda69eadf031",
+      "name": "IF-1"
     },
     {
       "parameters": {
-        "sendTo": "={{ $('Webhook').item.json.body.data.fields.find(f => f.label === 'Email Address').value }}\n\n",
-        "subject": "Thank you for contacting Arnold Towing",
-        "emailType": "text",
-        "message": "Thank you for reaching out to Arnold Towing!  We received your inquiry but our office is currently closed. Our hours are Monday–Friday, 7am–7pm.  We will contact you first thing when we reopen. If this is a roadside emergency, please call us directly at 315-667-2546.  — Arnold Towing Team",
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "11d69d18-132a-4c62-ace9-ef461fecb6d7",
+              "leftValue": "={{ $json.timeCategory }}",
+              "rightValue": "business",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
         "options": {}
       },
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
       "position": [
-        400,
-        288
+        -848,
+        320
       ],
-      "id": "f096e852-88cc-4a30-bfe1-023df6ba3fe6",
-      "name": "Send a message2",
-      "webhookId": "1985969c-b713-42f8-84cb-e88328f7aca3",
-      "credentials": {
-        "gmailOAuth2": {
-          "id": "v0Gl4rtl3IvxYszy",
-          "name": "Gmail account"
-        }
-      }
+      "id": "a5b10c0e-6b68-4454-a72c-50b07d66c98a",
+      "name": "IF-2"
     }
   ],
   "pinData": {},
   "connections": {
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Anthropic Chat Model": {
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent",
+            "node": "AI Agent BH",
             "type": "ai_languageModel",
             "index": 0
           }
         ]
       ]
     },
-    "AI Agent": {
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent W/E",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent AH",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Owner Email BH": {
       "main": [
         [
           {
-            "node": "Send a message",
+            "node": "Customer Email BH",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Send a message": {
+    "Owner Email AH": {
       "main": [
         [
           {
-            "node": "Send a message1",
+            "node": "Customer Email AH",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If": {
+    "Owner Email W/E": {
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Customer Email W/E",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent BH": {
+      "main": [
+        [
+          {
+            "node": "Owner Email BH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent AH": {
+      "main": [
+        [
+          {
+            "node": "Owner Email AH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent W/E": {
+      "main": [
+        [
+          {
+            "node": "Owner Email W/E",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook: Tally Form": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "IF-1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF-1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent AH",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Send a message2",
+            "node": "IF-2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF-2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent BH",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent W/E",
             "type": "main",
             "index": 0
           }
@@ -247,9 +530,10 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "errorWorkflow": "eAreJSew25krScJo",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
   },
-  "versionId": "6d56b8f8-b800-4684-99a3-591bb4c6d5ad",
+  "versionId": "08addfc0-35d1-4380-8dd2-e7361476bd27",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
