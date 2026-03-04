@@ -1,0 +1,293 @@
+{
+  "name": "Deal Alert System",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ea3e5b6d-033f-49c8-946b-a86f721f104d",
+              "leftValue": "={{ new Date().getHours() }}\n",
+              "rightValue": 8,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "0255c62f-b7bc-46e6-9cb0-162d319af092",
+              "leftValue": "={{ new Date().getHours() }}\n",
+              "rightValue": 22,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -704,
+        -48
+      ],
+      "id": "a1c0e17e-58ac-4e91-9584-06600a5c1563",
+      "name": "TIME"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "https://slickdeals.net/newsearch.php?mode=search&searcharea=deals&q=clearance&rss=1"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        -48
+      ],
+      "id": "47077a51-b9c2-44aa-afce-077a268a09c6",
+      "name": "Slick Deals RSS Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "const title = $json.title.toLowerCase();\nconst description = ($json.description || '').toLowerCase();\nconst text = title + ' ' + description;\n\nconst keywords = [\n  'lego', 'tool', 'gaming', 'gpu', 'cpu', 'ram', 'ssd', 'nvme',\n  'headphone', 'speaker', 'toy', 'nintendo', 'xbox', 'playstation',\n  'air fryer', 'instant pot', 'dewalt', 'milwaukee', 'ryobi',\n  'keyboard', 'mouse', 'monitor', 'graphics card', 'processor',\n  'motherboard', 'action figure', 'pc part', 'ryobi', 'nerf',\n  'appliance', 'dyson', 'shark', 'instant pot'\n];\n\nconst matched = keywords.some(keyword => text.includes(keyword));\n\nif (matched) {\n  return [$input.item];\n}\n\nreturn [];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        -192
+      ],
+      "id": "9c101a6c-23f8-465f-b022-472924965434",
+      "name": "Item targets"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "29c89b55-7789-478d-91fe-14988b97b9a5",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "SCORE: 7",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "81da6527-8949-491e-b8ce-ca9f54ea6d6a",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "SCORE: 8",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "3bb3cea8-1d6b-47a0-bb50-d2d33bc6877c",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "SCORE: 9",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "9fe1f26d-6b6a-4b70-975f-9d215a32c698",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "SCORE: 10",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        -192
+      ],
+      "id": "9e5453d3-a4f5-4f7a-af55-d8ca9c44ba66",
+      "name": "Score"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-6",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.6"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        16
+      ],
+      "id": "ebb554a7-0363-445b-a67b-b0692d235417",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "tKupxyvlamegvGCk",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8688524912",
+        "text": "=🔥 DEAL ALERT  {{ $json.output }}  🔗 {{ $('Slick Deals RSS Trigger').item.json.link }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        -288
+      ],
+      "id": "5f301d6d-7c27-4851-bda7-829fe6dec855",
+      "name": "Telegram Alert",
+      "webhookId": "bb616b9c-6a44-4347-8932-1c4f6332a18a",
+      "credentials": {
+        "telegramApi": {
+          "id": "sD1svtxcIEgZDj66",
+          "name": "Deal Alert Telegram"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Evaluate this deal for resale profit potential:\n\nTitle: {{ $json.title }}\nDescription: {{ $json.contentSnippet }}\nLink: {{ $json.link }}\n",
+        "options": {
+          "systemMessage": "you are a retail arbitrage assistant. Evaluate the following deal and determine if it has strong resale profit potential on eBay or Facebook Marketplace.\n\nFocus categories: LEGO, tools (DeWalt, Milwaukee, Ryobi), electronics, headphones, speakers, toys, action figures, video games (especially Nintendo), small kitchen appliances, PC parts (GPU, CPU, RAM, SSD).\n\nScore the deal 1-10 on resale profit potential. Only deals scoring 7 or higher are worth alerting on.\n\nFor PC parts, factor in whether the component is current generation and still relevant — not just the discount.\n\nRespond in exactly this format:\nSCORE: [1-10]\nITEM: [item name]\nORIGINAL PRICE: [if available]\nDEAL PRICE: [if available]\nREASON: [1-2 sentences on why this is or isn't worth buying]\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -160,
+        -160
+      ],
+      "id": "a6cceddc-d7ea-4bba-b88e-f345f4ba91af",
+      "name": "Retail Arbitrage assistant",
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Slick Deals RSS Trigger": {
+      "main": [
+        [
+          {
+            "node": "TIME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TIME": {
+      "main": [
+        [
+          {
+            "node": "Item targets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Item targets": {
+      "main": [
+        [
+          {
+            "node": "Retail Arbitrage assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Retail Arbitrage assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score": {
+      "main": [
+        [
+          {
+            "node": "Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retail Arbitrage assistant": {
+      "main": [
+        [
+          {
+            "node": "Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "eAreJSew25krScJo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "ddc950c0-ac3f-4fbb-bded-f4747d3a35c1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
+  },
+  "id": "SiSnRkAoWMwcfo4Z",
+  "tags": []
+}

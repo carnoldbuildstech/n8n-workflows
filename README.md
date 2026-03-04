@@ -47,6 +47,16 @@ AI-powered 3D print file search assistant.
 - **Flow:** Chat Trigger → AI Agent (Claude) + Simple Memory + Tavily Search
 - **What it does:** User describes what they want to 3D print, Claude searches Printables.com and Thingiverse.com automatically and returns the top matching STL file links — no manual searching required
 
+### Deal Alert System
+Personal retail arbitrage deal finder with AI scoring.
+- **Trigger:** Slickdeals RSS feed (polls every 60 minutes, 8am–10pm only)
+- **Flow:** RSS Feed Trigger → IF (time window) → Code Node (keyword filter) → AI Agent (Claude) → IF (score 7+) → Telegram
+- **What it does:** Monitors Slickdeals for clearance deals in target categories, scores each deal 1-10 for resale profit potential on eBay/Facebook Marketplace, and sends a Telegram push notification for any deal scoring 7 or higher
+- **Target categories:** LEGO, tools (DeWalt/Milwaukee/Ryobi), electronics, headphones, speakers, toys/action figures, video games (especially Nintendo), small kitchen appliances, PC parts (GPU, CPU, RAM, SSD)
+- **Smart filtering:** JavaScript keyword filter eliminates irrelevant deals before AI scoring — saves API calls and n8n executions
+- **Error handling:** Connected to Error Alert System for account-wide monitoring
+- **Built:** Mar 4, 2026
+
 ## Tools Used
 - [n8n](https://n8n.io) — Workflow automation
 - [Claude](https://anthropic.com) — AI language model
@@ -54,6 +64,7 @@ AI-powered 3D print file search assistant.
 - Hunter.io — Lead enrichment API
 - Tally — Form trigger
 - Tavily — AI search API
+- Telegram — Push notifications (Deal Alert System)
 
 ## About
 Built as part of my transition into AI Workflow Architecture. These are real, working automations — not demos.
