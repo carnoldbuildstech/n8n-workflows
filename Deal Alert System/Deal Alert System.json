@@ -46,7 +46,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const title = $json.title.toLowerCase();\nconst description = ($json.description || '').toLowerCase();\nconst text = title + ' ' + description;\n\nconst keywords = [\n  // Brands\n  'lego', 'dewalt', 'milwaukee', 'ryobi', 'dyson', 'shark', 'nerf',\n  'nintendo', 'xbox', 'playstation',\n  // PC parts\n  'gpu', 'cpu', 'ram', 'ssd', 'nvme', 'graphics card', 'processor',\n  'motherboard', 'pc part', 'keyboard', 'mouse', 'monitor',\n  // Audio/Electronics\n  'headphone', 'speaker',\n  // Tools (generic)\n  'tool', 'drill', 'saw', 'wrench', 'plier', 'screwdriver', 'hammer',\n  'socket', 'impact', 'level', 'tape measure', 'utility knife', 'clamp',\n  'worklight', 'flashlight', 'multimeter', 'staple gun',\n  // Toys/Games\n  'gaming', 'toy', 'action figure',\n  // Kitchen appliances\n  'air fryer', 'instant pot', 'appliance', 'blender', 'coffee maker',\n  'vacuum', 'pressure cooker'\n];\n\nconst matched = keywords.some(keyword => text.includes(keyword));\n\nif (matched) {\n  return [$input.item];\n}\n\nreturn [];\n"
+        "jsCode": "const title = $json.title.toLowerCase();\nconst description = ($json.description || '').toLowerCase();\nconst text = title + ' ' + description;\n\nconst keywords = [\n  // Brands — tools\n  'dewalt', 'milwaukee', 'ryobi', 'makita', 'bosch', 'craftsman', 'ridgid',\n  // Generic tools\n  'drill', 'saw', 'wrench', 'plier', 'screwdriver', 'hammer', 'socket',\n  'impact', 'sander', 'grinder', 'level', 'clamp', 'staple gun',\n  'worklight', 'multimeter', 'utility knife', 'tape measure',\n  // PC parts\n  'gpu', 'cpu', 'ram', 'ssd', 'nvme', 'graphics card', 'processor',\n  'motherboard', 'pc part', 'keyboard', 'mouse', 'monitor', 'webcam',\n  // Audio\n  'headphone', 'earbuds', 'airpods', 'speaker', 'soundbar', 'bose',\n  'sony', 'jabra', 'beats', 'jbl',\n  // TV/Display\n  'tv', 'oled', 'qled', '4k', '8k', 'projector', 'television',\n  // Smart home\n  'ring', 'nest', 'echo', 'alexa', 'smart plug', 'smart bulb', 'wyze',\n  // Cameras\n  'camera', 'gopro', 'dashcam', 'security cam',\n  // Gaming\n  'nintendo', 'xbox', 'playstation', 'gaming', 'steam deck', 'controller',\n  'video game',\n  // Toys\n  'lego', 'nerf', 'toy', 'action figure',\n  // Kitchen appliances\n  'air fryer', 'instant pot', 'blender', 'coffee maker', 'keurig',\n  'pressure cooker', 'vacuum', 'dyson', 'shark',\n  // Tablets/Wearables\n  'ipad', 'tablet', 'kindle', 'smartwatch', 'apple watch', 'fitbit'\n];\n\nconst matched = keywords.some(keyword => text.includes(keyword));\n\nif (matched) {\n  return [$input.item];\n}\n\nreturn [];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -198,121 +198,11 @@
       "type": "n8n-nodes-base.rssFeedReadTrigger",
       "typeVersion": 1,
       "position": [
-        -1024,
-        -560
+        -1056,
+        -384
       ],
       "id": "c717ec67-1106-4f0d-8809-7d19925be2e9",
       "name": "Slickdeals Hot Deals"
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyX",
-              "value": 5,
-              "unit": "minutes"
-            }
-          ]
-        },
-        "feedUrl": "https://slickdeals.net/newsearch.php?mode=search&searcharea=deals&q=clearance&rss=1"
-      },
-      "type": "n8n-nodes-base.rssFeedReadTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1024,
-        -112
-      ],
-      "id": "47077a51-b9c2-44aa-afce-077a268a09c6",
-      "name": "Slick Deals clearance"
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyX",
-              "value": 5,
-              "unit": "minutes"
-            }
-          ]
-        },
-        "feedUrl": "=https://www.dealnews.com/rss/todays-edition"
-      },
-      "type": "n8n-nodes-base.rssFeedReadTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1024,
-        -416
-      ],
-      "id": "03516fdb-d1de-46a7-b67a-8556f1828d10",
-      "name": "Deal news"
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyX",
-              "value": 5,
-              "unit": "minutes"
-            }
-          ]
-        },
-        "feedUrl": "https://www.reddit.com/r/buildapcsales/.rss"
-      },
-      "type": "n8n-nodes-base.rssFeedReadTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1024,
-        -256
-      ],
-      "id": "979a517c-2eea-45d3-aa92-91808dbd7533",
-      "name": "Buildapcsales"
-    },
-    {
-      "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyX",
-              "value": 5,
-              "unit": "minutes"
-            }
-          ]
-        },
-        "feedUrl": "https://www.reddit.com/r/frugalmalefashion/.rss"
-      },
-      "type": "n8n-nodes-base.rssFeedReadTrigger",
-      "typeVersion": 1,
-      "position": [
-        -1024,
-        32
-      ],
-      "id": "2785a152-567c-4f47-9b38-290274f97670",
-      "name": "Male Fashion"
-    },
-    {
-      "parameters": {
-        "url": "={{ $json.link }}",
-        "options": {
-          "response": {
-            "response": {
-              "fullResponse": true,
-              "neverError": true
-            }
-          }
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        432,
-        -192
-      ],
-      "id": "cbcde1b2-be8b-4fb9-9e8d-399d5146860e",
-      "name": "HTTP Request",
-      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -347,6 +237,94 @@
       ],
       "id": "2392dabe-5a40-477d-9ec8-34b509002070",
       "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        432,
+        -192
+      ],
+      "id": "cbcde1b2-be8b-4fb9-9e8d-399d5146860e",
+      "name": "Active Check",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "https://slickdeals.net/newsearch.php?mode=search&searcharea=deals&q=clearance&rss=1"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        -256
+      ],
+      "id": "d05a9a9f-6712-4bf3-934c-d6a97eefa9cd",
+      "name": "Slickdeals Clearance"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "https://feeds.feedburner.com/edealinfo/topdeals.xml\t"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        0
+      ],
+      "id": "d2a57d1f-3af7-41ee-ae50-dcc682348e96",
+      "name": "FeedBurner Top Deals"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "https://feeds.feedburner.com/edealinfo/techdeals.xml\t"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1056,
+        -128
+      ],
+      "id": "302e1c50-e584-418e-b758-63217b0644d4",
+      "name": "FeedBurner Tech deals"
     }
   ],
   "pinData": {},
@@ -388,7 +366,7 @@
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "Active Check",
             "type": "main",
             "index": 0
           }
@@ -400,39 +378,6 @@
         [
           {
             "node": "Score",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Slick Deals clearance": {
-      "main": [
-        [
-          {
-            "node": "TIME",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Male Fashion": {
-      "main": [
-        [
-          {
-            "node": "TIME",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request": {
-      "main": [
-        [
-          {
-            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -466,7 +411,18 @@
         ]
       ]
     },
-    "Buildapcsales": {
+    "Active Check": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slickdeals Clearance": {
       "main": [
         [
           {
@@ -477,7 +433,18 @@
         ]
       ]
     },
-    "Deal news": {
+    "FeedBurner Top Deals": {
+      "main": [
+        [
+          {
+            "node": "TIME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FeedBurner Tech deals": {
       "main": [
         [
           {
@@ -498,7 +465,7 @@
     "errorWorkflow": "eAreJSew25krScJo",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "0a0ee538-6746-43c8-9fa0-d2905b418897",
+  "versionId": "c302e917-6906-41b2-9249-3af2c41f0183",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
