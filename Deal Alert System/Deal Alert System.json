@@ -46,29 +46,7 @@
     },
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyX",
-              "value": 5,
-              "unit": "minutes"
-            }
-          ]
-        },
-        "feedUrl": "https://slickdeals.net/newsearch.php?mode=search&searcharea=deals&q=clearance&rss=1"
-      },
-      "type": "n8n-nodes-base.rssFeedReadTrigger",
-      "typeVersion": 1,
-      "position": [
-        -912,
-        -48
-      ],
-      "id": "47077a51-b9c2-44aa-afce-077a268a09c6",
-      "name": "Slick Deals RSS Trigger"
-    },
-    {
-      "parameters": {
-        "jsCode": "const title = $json.title.toLowerCase();\nconst description = ($json.description || '').toLowerCase();\nconst text = title + ' ' + description;\n\nconst keywords = [\n  'lego', 'tool', 'gaming', 'gpu', 'cpu', 'ram', 'ssd', 'nvme',\n  'headphone', 'speaker', 'toy', 'nintendo', 'xbox', 'playstation',\n  'air fryer', 'instant pot', 'dewalt', 'milwaukee', 'ryobi',\n  'keyboard', 'mouse', 'monitor', 'graphics card', 'processor',\n  'motherboard', 'action figure', 'pc part', 'ryobi', 'nerf',\n  'appliance', 'dyson', 'shark', 'instant pot'\n];\n\nconst matched = keywords.some(keyword => text.includes(keyword));\n\nif (matched) {\n  return [$input.item];\n}\n\nreturn [];\n"
+        "jsCode": "const title = $json.title.toLowerCase();\nconst description = ($json.description || '').toLowerCase();\nconst text = title + ' ' + description;\n\nconst keywords = [\n  // Brands\n  'lego', 'dewalt', 'milwaukee', 'ryobi', 'dyson', 'shark', 'nerf',\n  'nintendo', 'xbox', 'playstation',\n  // PC parts\n  'gpu', 'cpu', 'ram', 'ssd', 'nvme', 'graphics card', 'processor',\n  'motherboard', 'pc part', 'keyboard', 'mouse', 'monitor',\n  // Audio/Electronics\n  'headphone', 'speaker',\n  // Tools (generic)\n  'tool', 'drill', 'saw', 'wrench', 'plier', 'screwdriver', 'hammer',\n  'socket', 'impact', 'level', 'tape measure', 'utility knife', 'clamp',\n  'worklight', 'flashlight', 'multimeter', 'staple gun',\n  // Toys/Games\n  'gaming', 'toy', 'action figure',\n  // Kitchen appliances\n  'air fryer', 'instant pot', 'appliance', 'blender', 'coffee maker',\n  'vacuum', 'pressure cooker'\n];\n\nconst matched = keywords.some(keyword => text.includes(keyword));\n\nif (matched) {\n  return [$input.item];\n}\n\nreturn [];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -167,14 +145,14 @@
     {
       "parameters": {
         "chatId": "8688524912",
-        "text": "=🔥 DEAL ALERT  {{ $json.output }}  🔗 {{ $('Slick Deals RSS Trigger').item.json.link }}",
+        "text": "=🔥 DEAL ALERT  {{ $json.output }}  🔗 {{ $('Slick Deals clearance').item.json.link }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        480,
-        -288
+        432,
+        16
       ],
       "id": "5f301d6d-7c27-4851-bda7-829fe6dec855",
       "name": "Telegram Alert",
@@ -203,21 +181,176 @@
       "id": "a6cceddc-d7ea-4bba-b88e-f345f4ba91af",
       "name": "Retail Arbitrage assistant",
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "https://slickdeals.net/newsearch.php?mode=frontpage&searcharea=deals&searchin=first&rss=1"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        -560
+      ],
+      "id": "c717ec67-1106-4f0d-8809-7d19925be2e9",
+      "name": "Slickdeals Hot Deals"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "https://slickdeals.net/newsearch.php?mode=search&searcharea=deals&q=clearance&rss=1"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        -112
+      ],
+      "id": "47077a51-b9c2-44aa-afce-077a268a09c6",
+      "name": "Slick Deals clearance"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "=https://www.dealnews.com/rss/todays-edition"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        -416
+      ],
+      "id": "03516fdb-d1de-46a7-b67a-8556f1828d10",
+      "name": "Deal news"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "https://www.reddit.com/r/buildapcsales/.rss"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        -256
+      ],
+      "id": "979a517c-2eea-45d3-aa92-91808dbd7533",
+      "name": "Buildapcsales"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "feedUrl": "https://www.reddit.com/r/frugalmalefashion/.rss"
+      },
+      "type": "n8n-nodes-base.rssFeedReadTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1024,
+        32
+      ],
+      "id": "2785a152-567c-4f47-9b38-290274f97670",
+      "name": "Male Fashion"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        432,
+        -192
+      ],
+      "id": "cbcde1b2-be8b-4fb9-9e8d-399d5146860e",
+      "name": "HTTP Request",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5c4bd616-f5c5-45be-8491-a76a559fea9d",
+              "leftValue": "={{ $json.statusCode }}\n",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        32
+      ],
+      "id": "2392dabe-5a40-477d-9ec8-34b509002070",
+      "name": "If"
     }
   ],
   "pinData": {},
   "connections": {
-    "Slick Deals RSS Trigger": {
-      "main": [
-        [
-          {
-            "node": "TIME",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "TIME": {
       "main": [
         [
@@ -255,7 +388,7 @@
       "main": [
         [
           {
-            "node": "Telegram Alert",
+            "node": "HTTP Request",
             "type": "main",
             "index": 0
           }
@@ -272,6 +405,88 @@
           }
         ]
       ]
+    },
+    "Slick Deals clearance": {
+      "main": [
+        [
+          {
+            "node": "TIME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Male Fashion": {
+      "main": [
+        [
+          {
+            "node": "TIME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Alert": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slickdeals Hot Deals": {
+      "main": [
+        [
+          {
+            "node": "TIME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buildapcsales": {
+      "main": [
+        [
+          {
+            "node": "TIME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deal news": {
+      "main": [
+        [
+          {
+            "node": "TIME",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -283,7 +498,7 @@
     "errorWorkflow": "eAreJSew25krScJo",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "ddc950c0-ac3f-4fbb-bded-f4747d3a35c1",
+  "versionId": "0a0ee538-6746-43c8-9fa0-d2905b418897",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
