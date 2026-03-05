@@ -20,7 +20,7 @@
     {
       "parameters": {
         "options": {
-          "systemMessage": "You are a helpful assistant that finds 3D print files for a hobbyist. \n\nWhen the user describes something they want to 3D print, search Printables.com and Thingiverse.com for matching STL files. \n\nReturn the top 3-5 results with:\n- The name of the file\n- A short description\n- The direct link to download it\n\nKeep your response friendly and simple. The user is not technical.\n"
+          "systemMessage": "[system prompt redacted]"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",

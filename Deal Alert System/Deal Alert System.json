@@ -167,9 +167,9 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Evaluate this deal for resale profit potential:\n\nTitle: {{ $json.title }}\nDescription: {{ $json.contentSnippet }}\nLink: {{ $json.link }}\n",
+        "text": "[system prompt redacted]",
         "options": {
-          "systemMessage": "you are a retail arbitrage assistant. Evaluate the following deal and determine if it has strong resale profit potential on eBay or Facebook Marketplace.\n\nFocus categories: LEGO, tools (DeWalt, Milwaukee, Ryobi), electronics, headphones, speakers, toys, action figures, video games (especially Nintendo), small kitchen appliances, PC parts (GPU, CPU, RAM, SSD).\n\nScore the deal 1-10 on resale profit potential. Only deals scoring 7 or higher are worth alerting on.\n\nFor PC parts, factor in whether the component is current generation and still relevant — not just the discount.\n\nRespond in exactly this format:\nSCORE: [1-10]\nITEM: [item name]\nORIGINAL PRICE: [if available]\nDEAL PRICE: [if available]\nREASON: [1-2 sentences on why this is or isn't worth buying]\n"
+          "systemMessage": "[system prompt redacted]"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",

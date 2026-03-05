@@ -19,7 +19,7 @@
     {
       "parameters": {
         "options": {
-          "systemMessage": "You are a helpful customer service assistant for a trucking company called Mile High Freight. You help customers track shipments, answer questions about delivery times, and handle complaints professionally. Always be polite, concise, and ask for a tracking number if the customer has an issue.\n"
+          "systemMessage": "[system prompt redacted]"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",

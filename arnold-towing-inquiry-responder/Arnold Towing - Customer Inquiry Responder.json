@@ -223,7 +223,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a dispatch assistant for Arnold Towing and Recovery. \nA new service request just came in during business hours.\n\nWrite a short urgent dispatch alert for the owner. Include:\n- Customer name\n- Phone number\n- Location\n- Service needed\n\nCustomer details:\nName: {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }}\nPhone: {{ $('Webhook: Tally Form').item.json.body.data.fields[1].value }}\nLocation: {{ $('Webhook: Tally Form').item.json.body.data.fields[3].value }}\nService: {{ $('Webhook: Tally Form').item.json.body.data.fields[4].value }}\n",
+        "text": "[system prompt redacted]",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -238,7 +238,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a dispatch assistant for Arnold Towing and Recovery.\nA service request came in AFTER BUSINESS HOURS.\n\nWrite a brief alert for the owner. Note it came in after hours \nand the customer will be contacted first thing next business morning.\n\nCustomer details:\nName: {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }}\nPhone: {{ $('Webhook: Tally Form').item.json.body.data.fields[1].value }}\nLocation: {{ $('Webhook: Tally Form').item.json.body.data.fields[3].value }}\nService: {{ $('Webhook: Tally Form').item.json.body.data.fields[4].value }}\n",
+        "text": "[system prompt redacted]",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -253,7 +253,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a dispatch assistant for Arnold Towing and Recovery.\nA service request came in over the WEEKEND.\n\nWrite a brief alert for the owner. Note it came in on the weekend\nand the customer will be contacted first thing Monday morning.\n\nCustomer details:\nName: {{ $('Webhook: Tally Form').item.json.body.data.fields[0].value }}\nPhone: {{ $('Webhook: Tally Form').item.json.body.data.fields[1].value }}\nLocation: {{ $('Webhook: Tally Form').item.json.body.data.fields[3].value }}\nService: {{ $('Webhook: Tally Form').item.json.body.data.fields[4].value }}\n",
+        "text": "[system prompt redacted]",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",

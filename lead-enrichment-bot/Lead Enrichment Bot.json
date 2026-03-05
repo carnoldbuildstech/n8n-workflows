@@ -20,7 +20,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a sales outreach assistant. A new lead has come in.\n\nLead name: {{$('Webhook').item.json.body.name}}\nLead email: {{$('Webhook').item.json.body.email}}\nCompany domain: {{$('HTTP Request').item.json.data.domain}}\n\nWrite a short, friendly, personalized cold outreach email to this lead. \nKeep it under 5 sentences. Don't be pushy. End with a simple question to start a conversation.\n",
+        "text": "[system prompt redacted]",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
