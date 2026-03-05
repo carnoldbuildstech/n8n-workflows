@@ -57,6 +57,9 @@ Personal retail arbitrage deal finder with AI scoring.
 - **Error handling:** Connected to Error Alert System for account-wide monitoring
 - **Built:** Mar 4, 2026
 
+## Note on System Prompts
+System prompts in workflow JSON files are redacted for security. The workflow architecture, node connections, and logic are fully visible.
+
 ## Tools Used
 - [n8n](https://n8n.io) — Workflow automation
 - [Claude](https://anthropic.com) — AI language model
