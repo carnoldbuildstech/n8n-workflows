@@ -89,13 +89,6 @@ All 4 workflows connected to the account-wide Error Alert System. Any failure em
 
 ---
 
-## Build Report
-
-Full node-by-node build report, issues encountered, and lessons learned:
-→ [okafor-triage-build-report.md](../../okafor-triage-build-report.md)
-
----
-
 ## Note on System Prompts
 
 The Triage Classifier system prompt is redacted in this public JSON. Unredacted originals are stored in the private backup folder.

@@ -76,7 +76,6 @@ Multi-channel tenant request triage system for a 14-property management company.
 - **Error handling:** Connected to Error Alert System for account-wide monitoring
 - **Built:** Mar 7, 2026
 - **Full details:** [Okafor Triage Project/README.md](Okafor%20Triage%20Project/README.md)
-- **Build report:** [okafor-triage-build-report.md](okafor-triage-build-report.md)
 
 ---
 
