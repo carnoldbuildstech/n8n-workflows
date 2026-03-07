@@ -26,7 +26,7 @@ Personal retail arbitrage deal finder with AI scoring.
 - **Error handling:** Connected to Error Alert System for account-wide monitoring
 - **Built:** Mar 4, 2026
 
-### Error Alert System
+### Error Alert System *(Internal Infrastructure)*
 Account-wide error monitoring for all workflows.
 - **Trigger:** Any workflow error across the entire n8n account
 - **Flow:** Error Trigger → Gmail
@@ -48,18 +48,12 @@ Automated customer inquiry system for a towing company.
 - **Code node:** JavaScript calculates EST time category from UTC timestamp, outputs `timeCategory` field
 - **Updated:** Mar 3, 2026 — upgraded from simple IF node to 3-path conditional routing
 
-### Lead Enrichment Bot
+### Lead Enrichment Bot *(Fictional Client)*
 Automated lead research and personalized outreach.
 - **Trigger:** Webhook with lead name + email
 - **Flow:** Webhook → HTTP Request (Hunter.io API) → AI Agent (Claude) → Gmail
 - **What it does:** Enriches lead data with company info, Claude writes a personalized outreach email, sends it automatically
 - **Error handling:** Hunter.io failures route to a dedicated Gmail alert instead of crashing the workflow (Level 2 error output pin)
-
-### AI Customer Service Agent
-General-purpose AI customer service automation.
-- **Trigger:** Webhook
-- **Flow:** AI Agent (Claude) handles responses
-- **What it does:** Handles customer inquiries with AI
 
 ### Okafor Property Management — Triage System *(Fictional Client)*
 Multi-channel tenant request triage system for a 14-property management company.
