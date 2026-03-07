@@ -4,7 +4,7 @@ AI-powered automation workflows built with n8n by Chris Arnold — AI Workflow A
 
 ## Workflows
 
-### Arnold Towing — Customer Inquiry Responder
+### Arnold Towing — Customer Inquiry Responder *(Portfolio Project — Fictional Client)*
 Automated customer inquiry system for a towing company.
 - **Trigger:** Tally form submission
 - **Flow:** Webhook → Code Node → IF-1 → IF-2 → AI Agent (Claude) → 2x Gmail
