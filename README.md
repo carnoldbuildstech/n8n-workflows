@@ -2,44 +2,13 @@
 
 AI-powered automation workflows built with n8n by Chris Arnold — AI Workflow Architect in training.
 
-## Workflows
-
-### Arnold Towing — Customer Inquiry Responder *(Portfolio Project — Fictional Client)*
-Automated customer inquiry system for a towing company.
-- **Trigger:** Tally form submission
-- **Flow:** Webhook → Code Node → IF-1 → IF-2 → AI Agent (Claude) → 2x Gmail
-- **What it does:** Sends an AI-written dispatch alert to the business owner and a professional confirmation email to the customer — automatically, 24/7
-- **Conditional logic:** 3-path routing based on time of inquiry:
-  - **Business Hours** (Mon–Fri 7am–7pm) → urgent dispatch alert
-  - **After Hours** (Mon–Fri outside business hours) → after hours alert, customer contacted next morning
-  - **Weekend** (Sat–Sun) → weekend alert, customer contacted Monday
-- **Code node:** JavaScript calculates EST time category from UTC timestamp, outputs `timeCategory` field
-- **Updated:** Mar 3, 2026 — upgraded from simple IF node to 3-path conditional routing
+## Personal Automations
 
 ### Roast Bot
 A fun AI-powered chatbot that lets people ask questions about me and get roast-style responses.
 - **Trigger:** Chat message
 - **Flow:** Chat Trigger → AI Agent (Claude) + Simple Memory
 - **What it does:** Responds to questions about the creator (me) with funny, personalized jokes — roasting myself based on information the bot already knows about me
-
-### Lead Enrichment Bot
-Automated lead research and personalized outreach.
-- **Trigger:** Webhook with lead name + email
-- **Flow:** Webhook → HTTP Request (Hunter.io API) → AI Agent (Claude) → Gmail
-- **What it does:** Enriches lead data with company info, Claude writes a personalized outreach email, sends it automatically
-- **Error handling:** Hunter.io failures route to a dedicated Gmail alert instead of crashing the workflow (Level 2 error output pin)
-
-### Error Alert System
-Account-wide error monitoring for all workflows.
-- **Trigger:** Any workflow error across the entire n8n account
-- **Flow:** Error Trigger → Gmail
-- **What it does:** Instantly emails Chris when any workflow fails — includes workflow name, failed node, error message, timestamp (Eastern), and a direct link to the execution
-
-### AI Customer Service Agent
-General-purpose AI customer service automation.
-- **Trigger:** Webhook
-- **Flow:** AI Agent (Claude) handles responses
-- **What it does:** Handles customer inquiries with AI
 
 ### 3D Print Finder
 AI-powered 3D print file search assistant.
@@ -57,11 +26,42 @@ Personal retail arbitrage deal finder with AI scoring.
 - **Error handling:** Connected to Error Alert System for account-wide monitoring
 - **Built:** Mar 4, 2026
 
+### Error Alert System
+Account-wide error monitoring for all workflows.
+- **Trigger:** Any workflow error across the entire n8n account
+- **Flow:** Error Trigger → Gmail
+- **What it does:** Instantly emails Chris when any workflow fails — includes workflow name, failed node, error message, timestamp (Eastern), and a direct link to the execution
+
 ---
 
-## Portfolio Projects
+## Client Simulations
 
-### Okafor Property Management — Triage System *(Portfolio Project — Fictional Client)*
+### Arnold Towing — Customer Inquiry Responder *(Fictional Client)*
+Automated customer inquiry system for a towing company.
+- **Trigger:** Tally form submission
+- **Flow:** Webhook → Code Node → IF-1 → IF-2 → AI Agent (Claude) → 2x Gmail
+- **What it does:** Sends an AI-written dispatch alert to the business owner and a professional confirmation email to the customer — automatically, 24/7
+- **Conditional logic:** 3-path routing based on time of inquiry:
+  - **Business Hours** (Mon–Fri 7am–7pm) → urgent dispatch alert
+  - **After Hours** (Mon–Fri outside business hours) → after hours alert, customer contacted next morning
+  - **Weekend** (Sat–Sun) → weekend alert, customer contacted Monday
+- **Code node:** JavaScript calculates EST time category from UTC timestamp, outputs `timeCategory` field
+- **Updated:** Mar 3, 2026 — upgraded from simple IF node to 3-path conditional routing
+
+### Lead Enrichment Bot
+Automated lead research and personalized outreach.
+- **Trigger:** Webhook with lead name + email
+- **Flow:** Webhook → HTTP Request (Hunter.io API) → AI Agent (Claude) → Gmail
+- **What it does:** Enriches lead data with company info, Claude writes a personalized outreach email, sends it automatically
+- **Error handling:** Hunter.io failures route to a dedicated Gmail alert instead of crashing the workflow (Level 2 error output pin)
+
+### AI Customer Service Agent
+General-purpose AI customer service automation.
+- **Trigger:** Webhook
+- **Flow:** AI Agent (Claude) handles responses
+- **What it does:** Handles customer inquiries with AI
+
+### Okafor Property Management — Triage System *(Fictional Client)*
 Multi-channel tenant request triage system for a 14-property management company.
 - **Trigger:** 3 intake channels — Web Form (Webhook), Email (Gmail Trigger), SMS (Webhook)
 - **Architecture:** 3 thin intake workflows all calling 1 shared Triage Engine sub-workflow
