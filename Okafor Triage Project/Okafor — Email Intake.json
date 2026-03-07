@@ -1,0 +1,48 @@
+{
+  "name": "Okafor — Email Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": { "item": [{ "mode": "everyMinute" }] },
+        "filters": {
+          "readStatus": "unread",
+          "sender": "[tenant-sender-email-redacted]"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [0, 0],
+      "id": "2a9aec0e-263c-46ae-841f-d3771a2f5584",
+      "name": "Gmail Trigger",
+      "credentials": { "gmailOAuth2": { "id": "[credential-id-redacted]", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "workflowId": { "__rl": true, "value": "1Xed43v13FbAECiZ", "mode": "list", "cachedResultName": "Okafor — Triage Engine" },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "message": "={{ $json.snippet }}",
+            "tenantName": "={{ $json.From }}",
+            "unit": "=unknown",
+            "channel": "email"
+          }
+        },
+        "options": { "waitForSubWorkflow": false }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [192, 0],
+      "id": "ae0619aa-973b-4778-b2cb-fbef8f24aa9f",
+      "name": "Call 'Okafor — Triage Engine'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": { "main": [[{ "node": "Call 'Okafor — Triage Engine'", "type": "main", "index": 0 }]] }
+  },
+  "active": true,
+  "settings": { "executionOrder": "v1", "errorWorkflow": "eAreJSew25krScJo" },
+  "id": "MYJP40EeVI9jJfDy",
+  "tags": []
+}

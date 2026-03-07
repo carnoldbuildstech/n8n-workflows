@@ -1,0 +1,278 @@
+{
+  "name": "Okafor — Triage Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            { "name": "message" },
+            { "name": "tenantName" },
+            { "name": "unit" },
+            { "name": "channel" }
+          ]
+        }
+      },
+      "id": "41815c50-8a04-405e-ad60-739eca553a4c",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [-1024, -384]
+    },
+    {
+      "parameters": {
+        "jsCode": "const keywords = ['fire', 'gas', 'leak', 'flood', 'smoke', 'locked out', 'break-in'];\n\nconst message = $input.first().json.message?.toLowerCase() || '';\n\nconst matchedKeyword = keywords.find(kw => message.includes(kw));\n\nif (matchedKeyword) {\n  return [{\n    json: {\n      message: $input.first().json.message,\n      tenantName: $input.first().json.tenantName,\n      unit: $input.first().json.unit,\n      channel: $input.first().json.channel,\n      category: 'EMERGENCY',\n      flagReason: `Keyword match: \"${matchedKeyword}\"`,\n      skipAI: true\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    message: $input.first().json.message,\n    tenantName: $input.first().json.tenantName,\n    unit: $input.first().json.unit,\n    channel: $input.first().json.channel,\n    category: null,\n    flagReason: null,\n    skipAI: false\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-864, -384],
+      "id": "be14d97c-98fd-4a17-ba98-adfffe8b458b",
+      "name": "Keyword Filter"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "[system prompt redacted]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [-704, -384],
+      "id": "2cd49f3f-877d-454e-b953-ecd52b8a12a9",
+      "name": "Triage Classifier"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "9b433f1b-aed8-40f8-b96f-722a4e039b31",
+              "leftValue": "={{ $json.skipAI }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [-400, -336],
+      "id": "b1fe59a3-6a20-4558-af1a-4685c4773daf",
+      "name": "Keyword Match?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const aiOutput = $input.first().json.output?.trim().toUpperCase() || 'AMBIGUOUS';\n\nconst validCategories = ['EMERGENCY', 'MAINTENANCE', 'BILLING', 'AMBIGUOUS'];\nconst category = validCategories.includes(aiOutput) ? aiOutput : 'AMBIGUOUS';\n\nconst originalData = $('Keyword Filter').first().json;\n\nreturn [{\n  json: {\n    message: originalData.message,\n    tenantName: originalData.tenantName,\n    unit: originalData.unit,\n    channel: originalData.channel,\n    category: category,\n    flagReason: originalData.skipAI ? originalData.flagReason : 'AI categorization — potential safety risk',\n    skipAI: originalData.skipAI\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-160, -384],
+      "id": "b03f86d7-6855-491a-8477-8d5ace0a4d2f",
+      "name": "Extract AI Category"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "fc1303fe-1420-4248-94eb-7d29e5cffc60",
+              "leftValue": "={{ $json.category }}",
+              "rightValue": "EMERGENCY",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [192, -256],
+      "id": "d1c89f0a-30de-41fc-9d91-c28f6cc7f41b",
+      "name": "EMERGENCY?"
+    },
+    {
+      "parameters": {
+        "model": { "__rl": true, "mode": "list", "value": "claude-sonnet-4-5-20250929" },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [-832, -208],
+      "id": "39ad7e6d-25b7-4529-b569-0a8e8d8b8534",
+      "name": "Anthropic Chat Model",
+      "credentials": { "anthropicApi": { "id": "[credential-id-redacted]", "name": "Anthropic account" } }
+    },
+    {
+      "parameters": {
+        "model": { "__rl": true, "mode": "list", "value": "gpt-4o-mini" },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [-688, -208],
+      "id": "22aee31e-be16-49d1-9cdf-5a38ed770392",
+      "name": "OpenAI Chat Model",
+      "credentials": { "openAiApi": { "id": "[credential-id-redacted]", "name": "n8n free OpenAI API credits" } }
+    },
+    {
+      "parameters": {
+        "chatId": "[chat-id-redacted]",
+        "text": "=🚨 EMERGENCY ALERT — Okafor Property Management\n\nTenant: {{ $json.tenantName }}\nUnit: {{ $json.unit }}\nChannel: {{ $json.channel }}\n\n{{ $json.flagReason }}\n\nOriginal message:\n\"{{ $json.message }}\"",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [560, -240],
+      "id": "5293e229-1f1a-4e41-aaa3-56d6e1cb761b",
+      "name": "Alert — Sandra Telegram",
+      "credentials": { "telegramApi": { "id": "[credential-id-redacted]", "name": "Okafor Telegram Bot" } }
+    },
+    {
+      "parameters": {
+        "sendTo": "[maintenance-email-redacted]",
+        "subject": "=🚨 EMERGENCY — {{ $json.tenantName }}, Unit {{ $json.unit }}",
+        "emailType": "text",
+        "message": "=EMERGENCY REQUEST — Immediate Attention Required\n\nTenant: {{ $json.tenantName }}\nUnit: {{ $json.unit }}\nSubmitted via: {{ $json.channel }}\n\nFlagging reason: {{ $json.flagReason }}\n\nAI Summary: A potential emergency has been reported at this property. Please respond immediately.\n\nOriginal tenant message (verbatim):\n\"{{ $json.message }}\"\n\n---\nThis alert was generated automatically by the Okafor Property Management Triage System.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [560, -432],
+      "id": "12a8da70-9b78-4bfa-a5f3-1a5b4a284d29",
+      "name": "Email — Maintenance Emergency",
+      "credentials": { "gmailOAuth2": { "id": "[credential-id-redacted]", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "eaadb0f0-2b8f-40ca-80c4-f60537083ce2",
+              "leftValue": "={{ $json.category }}",
+              "rightValue": "MAINTENANCE",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [-1200, 32],
+      "id": "ab0cf3cb-6524-4ab3-ba74-e79e41e45b85",
+      "name": "MAINTENANCE?"
+    },
+    {
+      "parameters": {
+        "sendTo": "[office-manager-email-redacted]",
+        "subject": "=Maintenance Request — {{ $json.tenantName }}, Unit {{ $json.unit }}",
+        "emailType": "text",
+        "message": "=New Maintenance Request\n\nTenant: {{ $json.tenantName }}\nUnit: {{ $json.unit }}\nSubmitted via: {{ $json.channel }}\n\nAI Summary: A non-urgent maintenance request has been submitted. Please review and schedule accordingly.\n\nOriginal tenant message (verbatim):\n\"{{ $json.message }}\"\n\n---\nThis request was generated automatically by the Okafor Property Management Triage System.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [-864, 16],
+      "id": "00c29350-00e3-4fb6-bd1d-ca331ff8b15f",
+      "name": "Email — Office Manager",
+      "credentials": { "gmailOAuth2": { "id": "[credential-id-redacted]", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "3d47819e-d88a-48bb-b4f4-5a4fb9a40fa2",
+              "leftValue": "={{ $json.category }}",
+              "rightValue": "BILLING",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [-1056, 176],
+      "id": "bf506dd8-d389-4891-87b5-2d3e7361df07",
+      "name": "BILLING?"
+    },
+    {
+      "parameters": {
+        "sendTo": "[owner-email-redacted]",
+        "subject": "=Billing Inquiry — {{ $json.tenantName }}, Unit {{ $json.unit }}",
+        "emailType": "text",
+        "message": "=New Billing Inquiry\n\nTenant: {{ $json.tenantName }}\nUnit: {{ $json.unit }}\nSubmitted via: {{ $json.channel }}\n\nAI Summary: A billing or financial question has been submitted. Please review and respond directly to the tenant.\n\nOriginal tenant message (verbatim):\n\"{{ $json.message }}\"\n\n---\nThis request was generated automatically by the Okafor Property Management Triage System.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [-736, 160],
+      "id": "7c3d602d-469c-46b7-96f1-687e7e1e96e6",
+      "name": "Email — Sandra Billing",
+      "credentials": { "gmailOAuth2": { "id": "[credential-id-redacted]", "name": "Gmail account" } }
+    },
+    {
+      "parameters": {
+        "sendTo": "[owner-email-redacted]",
+        "subject": "=⚠️ Manual Review Required — {{ $json.tenantName }}, Unit {{ $json.unit }}",
+        "emailType": "text",
+        "message": "=Unclassified Request — Manual Review Required\n\nTenant: {{ $json.tenantName }}\nUnit: {{ $json.unit }}\nSubmitted via: {{ $json.channel }}\n\nThis message could not be automatically categorized. Please review the original message below and respond directly to the tenant.\n\nOriginal tenant message (verbatim):\n\"{{ $json.message }}\"\n\n---\nThis request was generated automatically by the Okafor Property Management Triage System.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [-864, 320],
+      "id": "141b0a87-4bd2-43d6-bc60-6f56fe42a006",
+      "name": "Email — Sandra Ambiguous",
+      "credentials": { "gmailOAuth2": { "id": "[credential-id-redacted]", "name": "Gmail account" } }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Execute Workflow Trigger": { "main": [[{ "node": "Keyword Filter", "type": "main", "index": 0 }]] },
+    "Keyword Filter": { "main": [[{ "node": "Triage Classifier", "type": "main", "index": 0 }]] },
+    "Triage Classifier": { "main": [[{ "node": "Keyword Match?", "type": "main", "index": 0 }]] },
+    "Keyword Match?": {
+      "main": [
+        [{ "node": "EMERGENCY?", "type": "main", "index": 0 }],
+        [{ "node": "Extract AI Category", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract AI Category": { "main": [[{ "node": "EMERGENCY?", "type": "main", "index": 0 }]] },
+    "Anthropic Chat Model": { "ai_languageModel": [[{ "node": "Triage Classifier", "type": "ai_languageModel", "index": 0 }]] },
+    "OpenAI Chat Model": { "ai_languageModel": [[{ "node": "Triage Classifier", "type": "ai_languageModel", "index": 1 }]] },
+    "EMERGENCY?": {
+      "main": [
+        [
+          { "node": "Alert — Sandra Telegram", "type": "main", "index": 0 },
+          { "node": "Email — Maintenance Emergency", "type": "main", "index": 0 }
+        ],
+        [{ "node": "MAINTENANCE?", "type": "main", "index": 0 }]
+      ]
+    },
+    "MAINTENANCE?": {
+      "main": [
+        [{ "node": "Email — Office Manager", "type": "main", "index": 0 }],
+        [{ "node": "BILLING?", "type": "main", "index": 0 }]
+      ]
+    },
+    "BILLING?": {
+      "main": [
+        [{ "node": "Email — Sandra Billing", "type": "main", "index": 0 }],
+        [{ "node": "Email — Sandra Ambiguous", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": true,
+  "settings": { "executionOrder": "v1", "errorWorkflow": "eAreJSew25krScJo" },
+  "id": "1Xed43v13FbAECiZ",
+  "tags": []
+}

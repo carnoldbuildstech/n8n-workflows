@@ -57,6 +57,29 @@ Personal retail arbitrage deal finder with AI scoring.
 - **Error handling:** Connected to Error Alert System for account-wide monitoring
 - **Built:** Mar 4, 2026
 
+---
+
+## Portfolio Projects
+
+### Okafor Property Management — Triage System *(Portfolio Project — Fictional Client)*
+Multi-channel tenant request triage system for a 14-property management company.
+- **Trigger:** 3 intake channels — Web Form (Webhook), Email (Gmail Trigger), SMS (Webhook)
+- **Architecture:** 3 thin intake workflows all calling 1 shared Triage Engine sub-workflow
+- **Triage Engine:** Two-layer classification — keyword check (deterministic) runs before AI. Keywords bypass Claude entirely for speed and reliability.
+- **AI Agent:** Claude classifies non-keyword messages into EMERGENCY, MAINTENANCE, BILLING, or AMBIGUOUS — single word output, biased toward safety
+- **4-path routing:**
+  - EMERGENCY → Telegram alert to owner + Gmail to maintenance staff (both fire simultaneously)
+  - MAINTENANCE → Gmail to office manager
+  - BILLING → Gmail to owner
+  - AMBIGUOUS → Gmail to owner, flagged for manual review
+- **Flagging transparency:** Every emergency alert states why it was flagged — keyword match or AI judgment call
+- **Error handling:** Connected to Error Alert System for account-wide monitoring
+- **Built:** Mar 7, 2026
+- **Full details:** [Okafor Triage Project/README.md](Okafor%20Triage%20Project/README.md)
+- **Build report:** [okafor-triage-build-report.md](okafor-triage-build-report.md)
+
+---
+
 ## Note on System Prompts
 System prompts in workflow JSON files are redacted for security. The workflow architecture, node connections, and logic are fully visible.
 
