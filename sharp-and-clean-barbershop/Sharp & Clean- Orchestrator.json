@@ -1,0 +1,333 @@
+{
+  "name": "Sharp & Clean- Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Razorback, I'm the AI assistant for Tony's Sharp & Clean. How can I help you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "dd0fc386-d2eb-4f26-8dee-ce084b1c9483",
+      "name": "Sharp & Clean Web Chat",
+      "webhookId": "1450e787-0bac-4503-b8dc-4f847449dcc5"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        464,
+        224
+      ],
+      "id": "1869560f-dde9-4e88-a556-db2b3e13110b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-6",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.6"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        224
+      ],
+      "id": "586c27c7-21c9-46f7-9b93-600fe9d3e6c8",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "tKupxyvlamegvGCk",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "[system prompt redacted]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        464,
+        0
+      ],
+      "id": "24c1f989-e5b3-4fca-a51a-d46508809d80",
+      "name": "Orchestrator"
+    },
+    {
+      "parameters": {
+        "description": "Use this to answer any question about Sharp & Clean services, hours, prices, walk-ins, or shop policies. Input should be the customer's question as a string.\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "bjbHr7w74AoFc0rZ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/bjbHr7w74AoFc0rZ",
+          "cachedResultName": "SC - FAQ"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        224
+      ],
+      "id": "9bcb3b3b-a09f-4046-91a4-9ea24b61d6a4",
+      "name": "SC - FAQ"
+    },
+    {
+      "parameters": {
+        "description": "Use this when a customer complains, expresses dissatisfaction, asks to speak to a person, or has a request you cannot handle. Collect the customer's name and contact info before calling this tool.\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "dknjlI06OW99on5i",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/dknjlI06OW99on5i",
+          "cachedResultName": "SC - Escalate"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "context": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('context', ``, 'string') }}",
+            "customer_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('customer_name', ``, 'string') }}",
+            "contact_info": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('contact_info', ``, 'string') }}",
+            "reason": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('reason', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "contact_info",
+              "displayName": "contact_info",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "reason",
+              "displayName": "reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        736,
+        224
+      ],
+      "id": "1bf434ab-acfe-418c-87c6-52de6195f559",
+      "name": "Call 'SC - Escalate'"
+    },
+    {
+      "parameters": {
+        "description": "Use this to book an appointment. Before calling, collect the service (haircut, fade, beard trim, or full service), the customer's requested date and time, their name, and their email. When passing requested_datetime, you MUST convert it to ISO 8601 format — example: 2026-07-12T14:00:00. Never pass a plain English date string. Pass all four fields when calling this tool.\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "UEVgqV8eZS2DG6F7",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/UEVgqV8eZS2DG6F7",
+          "cachedResultName": "SC - Book"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "service": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('service', ``, 'string') }}",
+            "requested_datetime": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('requested_datetime', ``, 'string') }}",
+            "customer_name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('customer_name', ``, 'string') }}",
+            "customer_email": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('customer_email', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "service",
+              "displayName": "service",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "requested_datetime",
+              "displayName": "requested_datetime",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "customer_name",
+              "displayName": "customer_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "customer_email",
+              "displayName": "customer_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        224
+      ],
+      "id": "65682970-c682-46ef-b339-23a04b1b0eee",
+      "name": "Call 'SC - Book'"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Sharp & Clean Web Chat": {
+      "main": [
+        [
+          {
+            "node": "Orchestrator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Orchestrator",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Orchestrator",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC - FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'SC - Escalate'": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'SC - Book'": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orchestrator",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "eAreJSew25krScJo",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "6e339f9d-2989-4d5e-b976-6a1fbec74fad",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1aa19332ca1193abf1eb37f891be597bc690c7ea156301581f391184f7eb4652"
+  },
+  "id": "yMHY6An2uXoORpUJ",
+  "tags": []
+}
