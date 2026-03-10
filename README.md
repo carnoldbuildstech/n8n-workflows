@@ -71,6 +71,21 @@ Multi-channel tenant request triage system for a 14-property management company.
 - **Built:** Mar 7, 2026
 - **Full details:** [Okafor Triage Project/README.md](Okafor%20Triage%20Project/README.md)
 
+### Sharp & Clean Barbershop — AI Communication System *(Fictional Client)*
+Full multi-agent AI communication system for a barbershop — handles FAQs, appointment booking, and customer escalations automatically.
+- **Trigger:** n8n Chat Trigger (web chat)
+- **Architecture:** Orchestrator agent (Razorback) with Simple Memory + 3 sub-workflow tools
+- **Flow:** Chat Trigger → Orchestrator Agent → FAQ / Book / Escalate sub-workflows
+- **FAQ sub-workflow:** AI Agent answers questions about hours, services, prices, walk-ins using Tony's business data — no tools, no memory, plain text return
+- **Book sub-workflow:** Checks Google Calendar availability via HTTP Request (freebusy API), creates calendar events via HTTP Request (Calendar Events API), sends HTML confirmation email to customer via Gmail
+- **Escalate sub-workflow:** Collects customer name + contact info, sends formatted Gmail alert to shop owner, returns confirmation string to orchestrator
+- **Double-booking protection:** freebusy check blocks duplicate bookings and returns alternatives
+- **Date handling:** Orchestrator system prompt injects current date dynamically via Luxon expression — prevents AI from using training data dates
+- **Error handling:** Connected to Error Alert System. All 13 integration tests passed.
+- **Key technical note:** n8n v2.9.4 Google Calendar node is broken (sends calendarId as array). Both availability check and event creation use HTTP Request nodes calling the Google Calendar API directly.
+- **Built:** Mar 10, 2026
+- **Full details:** [sharp-and-clean-barbershop/tonys-sharp-and-clean.md](sharp-and-clean-barbershop/tonys-sharp-and-clean.md)
+
 ---
 
 ## Note on System Prompts
@@ -80,6 +95,7 @@ System prompts in workflow JSON files are redacted for security. The workflow ar
 - [n8n](https://n8n.io) — Workflow automation
 - [Claude](https://anthropic.com) — AI language model
 - Gmail — Email delivery
+- Google Calendar API — Appointment availability and booking (Sharp & Clean)
 - Hunter.io — Lead enrichment API
 - Tally — Form trigger
 - Tavily — AI search API
