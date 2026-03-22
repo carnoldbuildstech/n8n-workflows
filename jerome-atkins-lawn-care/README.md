@@ -110,7 +110,8 @@ This is a learning/portfolio build. The following gaps would need to be addresse
 | No encryption at rest | SQLite DB is unencrypted. Production would require an encrypted Docker volume. |
 | No backup | DB lives in a Docker volume with no backup cron. A container wipe loses all customer history. |
 | PII handling | Phone numbers are PII. Production deployment requires a data retention policy and customer disclosure. |
-| Gmail output | Built with Gmail for this demo. Real deployment would use Telegram for faster phone delivery. |
+| Gmail output | Gmail used for build simplicity (OAuth already configured). Production deployment would use Telegram for real-time mobile delivery to Jerome's phone. |
+| SQL injection | `name` and `job_description` are inserted into SQL strings without sanitization. Phone is safe (digits-only normalization). Production requires parameterized queries. |
 
 ---
 
