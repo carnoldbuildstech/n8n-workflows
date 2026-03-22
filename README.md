@@ -71,6 +71,21 @@ Multi-channel tenant request triage system for a 14-property management company.
 - **Built:** Mar 7, 2026
 - **Full details:** [Okafor Triage Project/README.md](Okafor%20Triage%20Project/README.md)
 
+### Jerome Atkins — Lawn Care Request Tracker *(Fictional Client)*
+Stateful customer tracking system for a one-man lawn care operation.
+- **Trigger:** Webhook (POST) — customer name, phone, job description
+- **Flow:** Webhook → Normalize Phone (Code) → SQLite Node (init) → SQLite SELECT → Check Result (Code) → IF → two paths
+- **New customer path:** SQLite INSERT → AI Agent (Claude) → Gmail
+- **Returning customer path:** AI Agent (Claude) → SQLite UPDATE → Gmail
+- **Error path:** SQLite SELECT error pin → Gmail plain alert
+- **What it does:** Normalizes phone numbers, looks up the customer in SQLite, and delivers Jerome a scannable briefing before he calls back — new customers get a first-contact summary, returning customers get their full job history
+- **Stateful:** Customer records persist in SQLite across all workflow runs. History appends on every new request.
+- **AI security:** Both agents include prompt injection defense, system prompt confidentiality, and job description validation — adversarial inputs are rejected with a fallback message
+- **Key technical note:** n8n v2.11.4 expression editor silently appends a newline to all expression fields. IF conditions using `equals` always fail because `"yes\n" ≠ "yes"`. Workaround: use `contains` operator which is immune to the trailing character.
+- **Community node:** `n8n-nodes-sqlite3` by DangerBlack
+- **Built:** Mar 22, 2026
+- **Full details:** [jerome-atkins-lawn-care/README.md](jerome-atkins-lawn-care/README.md)
+
 ### Sharp & Clean Barbershop — AI Communication System *(Fictional Client)*
 Full multi-agent AI communication system for a barbershop — handles FAQs, appointment booking, and customer escalations automatically.
 - **Trigger:** n8n Chat Trigger (web chat)

@@ -1,0 +1,303 @@
+{
+  "name": "Jerome Atkins — Lawn Care Request Tracker",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "jerome-lawn",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-128, -20],
+      "id": "76ba71c0-03f2-4913-9617-6775c6a6b470",
+      "name": "Webhook",
+      "webhookId": "9b27e031-45e7-44b3-b215-47a3dfbe628a"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.body.phone || '';\nconst normalized = raw.replace(/\\D/g, '');\n\nreturn [{\n  json: {\n    ...$input.first().json.body,\n    phone: normalized\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [96, -20],
+      "id": "e5477af8-30ec-46b5-a95b-1bd394ca3b13",
+      "name": "Normalize Phone"
+    },
+    {
+      "parameters": {
+        "db_path": "/home/node/.n8n/jerome.db",
+        "query_type": "CREATE",
+        "query": "CREATE TABLE IF NOT EXISTS customers (\n  phone TEXT PRIMARY KEY,\n  name TEXT,\n  history TEXT,\n  last_updated TEXT\n)\n",
+        "args": "[]",
+        "additionalOptions": {}
+      },
+      "type": "n8n-nodes-sqlite3.sqliteNode",
+      "typeVersion": 1,
+      "position": [320, -20],
+      "id": "b3db01cb-7c34-4f31-b7ee-5add00ce367d",
+      "name": "SQLite Node"
+    },
+    {
+      "parameters": {
+        "db_path": "/home/node/.n8n/jerome.db",
+        "query_type": "SELECT",
+        "query": "=SELECT * FROM customers WHERE phone = '{{ $('Normalize Phone').first().json.phone }}';\n",
+        "args": "[]",
+        "additionalOptions": {}
+      },
+      "type": "n8n-nodes-sqlite3.sqliteNode",
+      "typeVersion": 1,
+      "position": [544, -20],
+      "id": "965a0f4b-cc5e-4108-8886-146d7ada24db",
+      "name": "SQLite SELECT",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const results = $input.first().json;\nconst found = Array.isArray(results) && results.length > 0;\n\nreturn [{\n  json: {\n    customerFound: found ? \"yes\" : \"no\",\n    record: found ? results[0] : null,\n    phone: $(\"Normalize Phone\").first().json.phone,\n    name: $(\"Normalize Phone\").first().json.name,\n    job_description: $(\"Normalize Phone\").first().json.job_description\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [768, -116],
+      "id": "abfc8739-15b7-48e1-83e1-c3ab960df017",
+      "name": "Check Result"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "646cbe0c-373f-44f0-8df6-6bd1c81d7ef8",
+              "leftValue": "={{ $json.customerFound }}\n",
+              "rightValue": "yes",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [992, -116],
+      "id": "ac1bed70-ffbe-4d18-b6aa-1b0d9d79bec9",
+      "name": "New or Returning?"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Returning customer inquiry.\nName: {{ $('Normalize Phone').first().json.name }}\nPhone: {{ $('Normalize Phone').first().json.phone }}\nRequest: {{ $('Normalize Phone').first().json.job_description }}\nPrior history: {{ $('Check Result').first().json.record.history }}\n",
+        "options": {
+          "systemMessage": "[system prompt redacted]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [1216, -368],
+      "id": "992f2f86-7a89-4764-8204-6d792c6d94b3",
+      "name": "AI Agent- Returning"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-4-5-20250929",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [1288, -144],
+      "id": "f53ae737-b18c-4a67-9cb0-b56d575d3433",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "6kGra2jCs0OuVXTR",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "db_path": "/home/node/.n8n/jerome.db",
+        "query": "=UPDATE customers\nSET history = history || ' | ' || '{{ $('Normalize Phone').first().json.job_description }} ({{ $now }})'\n    last_updated = '{{ $now }}'\nWHERE phone = '{{ $('Normalize Phone').first().json.phone }}';\n",
+        "args": "[]",
+        "additionalOptions": {}
+      },
+      "type": "n8n-nodes-sqlite3.sqliteNode",
+      "typeVersion": 1,
+      "position": [1632, -264],
+      "id": "db7332ad-5c27-46d4-b241-50623af9dda0",
+      "name": "SQLite UPDATE"
+    },
+    {
+      "parameters": {
+        "sendTo": "chris.j.arnold95@gmail.com",
+        "subject": "Jerome Lawn Tracker — Returning Customer",
+        "emailType": "text",
+        "message": "={{ $('AI Agent- Returning').first().json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [1920, -264],
+      "id": "59481108-7961-4017-a9c6-15a53b92058b",
+      "name": "Gmail - Returning",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YnBSr1bdrnReM676",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "db_path": "/home/node/.n8n/jerome.db",
+        "query": "=INSERT INTO customers (phone, name, history, last_updated)\nVALUES ('{{ $('Normalize Phone').first().json.phone }}', '{{ $('Normalize Phone').first().json.name }}', '{{ $('Normalize Phone').first().json.job_description }}', '{{ $now }}');\n",
+        "args": "[]",
+        "additionalOptions": {}
+      },
+      "type": "n8n-nodes-sqlite3.sqliteNode",
+      "typeVersion": 1,
+      "position": [1280, 32],
+      "id": "740de9f6-cd75-4e41-9df3-e1a84acf2f87",
+      "name": "SQLite INSERT"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=New customer inquiry.\nName: {{ $('Normalize Phone').first().json.name }}\nPhone: {{ $('Normalize Phone').first().json.phone }}\nRequest: {{ $('Normalize Phone').first().json.job_description }}\nNo prior history on file — first contact.\n",
+        "options": {
+          "systemMessage": "[system prompt redacted]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [1568, 32],
+      "id": "b7463100-3d67-4bd3-888f-89961be7a38b",
+      "name": "AI Agent- NEW"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-4-5-20250929",
+          "cachedResultName": "Claude Sonnet 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [1640, 256],
+      "id": "a96dcd80-a21b-43cb-aa8b-a66d013f1505",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "6kGra2jCs0OuVXTR",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "chris.j.arnold95@gmail.com",
+        "subject": "Jerome Lawn Tracker — New Customer",
+        "emailType": "text",
+        "message": "={{ $('AI Agent- NEW').first().json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [1920, 32],
+      "id": "850f8562-17d6-4b27-b62f-d404cc4aa697",
+      "name": "Gmail - NEW",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YnBSr1bdrnReM676",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "chris.j.arnold95@gmail.com",
+        "subject": "Jerome Lawn Tracker — DB Error",
+        "emailType": "text",
+        "message": "Jerome Lawn Tracker: DB lookup failed. Manual check required. A request may have come in.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [768, 76],
+      "id": "e2ccc8e9-1e6a-4668-8751-5bdf293a84ca",
+      "name": "Gmail - ERROR",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YnBSr1bdrnReM676",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Normalize Phone", "type": "main", "index": 0}]]
+    },
+    "Normalize Phone": {
+      "main": [[{"node": "SQLite Node", "type": "main", "index": 0}]]
+    },
+    "SQLite Node": {
+      "main": [[{"node": "SQLite SELECT", "type": "main", "index": 0}]]
+    },
+    "SQLite SELECT": {
+      "main": [
+        [{"node": "Check Result", "type": "main", "index": 0}],
+        [{"node": "Gmail - ERROR", "type": "main", "index": 0}]
+      ]
+    },
+    "Check Result": {
+      "main": [[{"node": "New or Returning?", "type": "main", "index": 0}]]
+    },
+    "New or Returning?": {
+      "main": [
+        [{"node": "AI Agent- Returning", "type": "main", "index": 0}],
+        [{"node": "SQLite INSERT", "type": "main", "index": 0}]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [[{"node": "AI Agent- Returning", "type": "ai_languageModel", "index": 0}]]
+    },
+    "AI Agent- Returning": {
+      "main": [[{"node": "SQLite UPDATE", "type": "main", "index": 0}]]
+    },
+    "SQLite UPDATE": {
+      "main": [[{"node": "Gmail - Returning", "type": "main", "index": 0}]]
+    },
+    "SQLite INSERT": {
+      "main": [[{"node": "AI Agent- NEW", "type": "main", "index": 0}]]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [[{"node": "AI Agent- NEW", "type": "ai_languageModel", "index": 0}]]
+    },
+    "AI Agent- NEW": {
+      "main": [[{"node": "Gmail - NEW", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
