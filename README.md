@@ -125,6 +125,10 @@ Practical cost modeling applied to two production workflows. Covers token measur
 - **Full document:** [resources/ai-workflow-economics.md](resources/ai-workflow-economics.md)
 - **Workflows analyzed:** Arnold Towing (one-shot responder), Sharp & Clean (conversational multi-agent)
 
+### Workflow Testing Checklist
+A reusable pre-deployment checklist applied to every build before it ships. Covers triggers, data flow, AI agent behavior, external integrations, error handling, edge cases, security, and final verification. Includes a known n8n platform gotchas table.
+- **Full document:** [resources/workflow-testing-checklist.md](resources/workflow-testing-checklist.md)
+
 ---
 
 ## Note on System Prompts
