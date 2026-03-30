@@ -116,6 +116,17 @@ Local n8n instance running in Docker — used for learning, testing, and Stage 2
 
 ---
 
+## Resources
+
+Reference documents covering the technical and economic thinking behind these workflows.
+
+### AI Workflow Economics — Cost Analysis & ROI Framework
+Practical cost modeling applied to two production workflows. Covers token measurement, cost-per-run calculations, model selection rationale, and ROI analysis for both one-shot and conversational multi-agent architectures.
+- **Full document:** [resources/ai-workflow-economics.md](resources/ai-workflow-economics.md)
+- **Workflows analyzed:** Arnold Towing (one-shot responder), Sharp & Clean (conversational multi-agent)
+
+---
+
 ## Note on System Prompts
 System prompts in workflow JSON files are redacted for security. The workflow architecture, node connections, and logic are fully visible.
 
