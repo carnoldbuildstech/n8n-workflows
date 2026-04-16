@@ -5,6 +5,7 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "priya-lead-validator",
+        "authentication": "headerAuth",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
@@ -15,7 +16,13 @@
       ],
       "id": "a6feb2ac-1858-4c29-ba53-58ebb72c3673",
       "name": "Webhook",
-      "webhookId": "[WEBHOOK_ID_REDACTED]"
+      "webhookId": "aaec053d-d760-411d-b76c-26d940add46f",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "nIpUKDtbk8gpBKwQ",
+          "name": "Priya Webhook Secret"
+        }
+      }
     },
     {
       "parameters": {
@@ -69,17 +76,17 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "[SPREADSHEET_ID_REDACTED]",
+          "value": "[spreadsheet-id-redacted]",
           "mode": "list",
           "cachedResultName": "Priya Nambiar",
-          "cachedResultUrl": "[SPREADSHEET_URL_REDACTED]"
+          "cachedResultUrl": "[spreadsheet-url-redacted]"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "[SPREADSHEET_URL_REDACTED]"
+          "cachedResultUrl": "[spreadsheet-url-redacted]"
         },
         "columns": {
           "mappingMode": "defineBelow",
@@ -153,7 +160,7 @@
       "name": "Write to Sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "[CREDENTIAL_ID_REDACTED]",
+          "id": "VH3MRvWziIqiJcgI",
           "name": "Google Sheets account"
         }
       },
@@ -161,7 +168,7 @@
     },
     {
       "parameters": {
-        "sendTo": "[EMAIL_REDACTED]",
+        "sendTo": "[recipient-email-redacted]",
         "subject": "=New qualified lead: {{ $('Validate Fields').item.json.name }}",
         "emailType": "text",
         "message": "=New lead received and added to your sheet.  Name: {{ $('Validate Fields').item.json.name }} Business: {{ $('Validate Fields').item.json.businessName }} Email: {{ $('Validate Fields').item.json.email }} Phone: {{ $('Validate Fields').item.json.phone }} Monthly Revenue: ${{ $('Validate Fields').item.json.monthlyRevenue }}",
@@ -175,17 +182,17 @@
       ],
       "id": "00c23692-3e9a-470d-b01d-1f505ba76747",
       "name": "Notify: Lead Added",
-      "webhookId": "[WEBHOOK_ID_REDACTED]",
+      "webhookId": "81629958-58ed-4a26-937e-044eb8ed6237",
       "credentials": {
         "gmailOAuth2": {
-          "id": "[CREDENTIAL_ID_REDACTED]",
+          "id": "xu4KOtHWhovjX5ZY",
           "name": "Gmail account"
         }
       }
     },
     {
       "parameters": {
-        "sendTo": "[EMAIL_REDACTED]",
+        "sendTo": "[recipient-email-redacted]",
         "subject": "=[ACTION REQUIRED] Sheet write failed — {{ $('Validate Fields').item.json.name }}",
         "emailType": "text",
         "message": "=A valid lead submission could not be written to Google Sheets. Manual action required.  Lead details: Name: {{ $('Validate Fields').item.json.name }} Business: {{ $('Validate Fields').item.json.businessName }} Email: {{ $('Validate Fields').item.json.email }} Phone: {{ $('Validate Fields').item.json.phone }} Monthly Revenue: ${{ $('Validate Fields').item.json.monthlyRevenue }}  Error: {{ $json.error.message }}",
@@ -199,17 +206,17 @@
       ],
       "id": "4af5b511-1916-424d-8c46-7528d9c06f87",
       "name": "Alert: Sheet Write Failed",
-      "webhookId": "[WEBHOOK_ID_REDACTED]",
+      "webhookId": "6d4dc251-23f9-489b-8f74-d11e497089c3",
       "credentials": {
         "gmailOAuth2": {
-          "id": "[CREDENTIAL_ID_REDACTED]",
+          "id": "xu4KOtHWhovjX5ZY",
           "name": "Gmail account"
         }
       }
     },
     {
       "parameters": {
-        "sendTo": "[EMAIL_REDACTED]",
+        "sendTo": "[recipient-email-redacted]",
         "subject": "Rejected lead submission",
         "emailType": "text",
         "message": "=A lead form submission was rejected due to missing or invalid fields.  Failed fields: {{ $('Validate Fields').item.json.errorSummary }}  Raw submission: Name: {{ $('Validate Fields').item.json.name }} Business: {{ $('Validate Fields').item.json.businessName }} Email: {{ $('Validate Fields').item.json.email }} Phone: {{ $('Validate Fields').item.json.phone }} Monthly Revenue: {{ $('Validate Fields').item.json.monthlyRevenue }}",
@@ -223,10 +230,10 @@
       ],
       "id": "ed4f9d69-97e9-4da5-86c3-4058d9228504",
       "name": "Notify: Rejected Lead",
-      "webhookId": "[WEBHOOK_ID_REDACTED]",
+      "webhookId": "af1d39ef-f817-4335-8246-f37f30d794b2",
       "credentials": {
         "gmailOAuth2": {
-          "id": "[CREDENTIAL_ID_REDACTED]",
+          "id": "xu4KOtHWhovjX5ZY",
           "name": "Gmail account"
         }
       }
@@ -299,11 +306,11 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "[VERSION_ID_REDACTED]",
+  "versionId": "01da0b61-cf6c-4b35-9bd7-66b501603fa3",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "[INSTANCE_ID_REDACTED]"
+    "instanceId": "4696f2b188137211b7c8297fc168eaa750cbba6b9356efd217ecf75e2ebe835b"
   },
-  "id": "[WORKFLOW_ID_REDACTED]",
+  "id": "rN2ao8g5fWLGVjnH",
   "tags": []
 }
