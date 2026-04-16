@@ -82,8 +82,9 @@ Deterministic lead validation workflow that filters bad form submissions before 
 - **Error path:** Google Sheets Error Output Pin → Gmail alert on sheet write failure
 - **What it does:** Checks all 5 fields for presence, validates email format (regex), phone length (10 digits), and revenue type (numeric). Clean leads go to the sheet. Bad ones are rejected with a named field list. Sheet write failures trigger an alert — nothing fails silently.
 - **Architectural decision:** Validation uses a Code node, not an LLM. Rules are 100% deterministic — no AI needed, no cost, no non-determinism.
+- **Security:** Webhook secured with Header Auth — requests without the correct `x-api-key` header are rejected before any workflow logic runs
 - **Error handling:** Error Output Pin on the Google Sheets node — confirmed via testing with a broken spreadsheet ID
-- **Built:** April 16, 2026
+- **Built:** April 16, 2026 | **Updated:** April 16, 2026 — webhook auth added
 
 ### Jerome Atkins — Lawn Care Request Tracker *(Fictional Client)*
 Stateful customer tracking system for a one-man lawn care operation.
