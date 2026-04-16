@@ -1,0 +1,309 @@
+{
+  "name": "Priya Nambiar — Lead Validator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "priya-lead-validator",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -896,
+        -128
+      ],
+      "id": "a6feb2ac-1858-4c29-ba53-58ebb72c3673",
+      "name": "Webhook",
+      "webhookId": "[WEBHOOK_ID_REDACTED]"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json.body ?? $input.first().json;\nconst errors = [];\n\nconst required = {\n  name: 'name',\n  businessName: 'business name',\n  email: 'email',\n  phone: 'phone',\n  monthlyRevenue: 'monthly revenue'\n};\n\n// Presence checks\nfor (const [key, label] of Object.entries(required)) {\n  if (!data[key] || String(data[key]).trim() === '') {\n    errors.push(label);\n  }\n}\n\n// Email format (only if present and not already flagged)\nif (data.email && String(data.email).trim() !== '') {\n  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(data.email)) {\n    errors.push('email format');\n  }\n}\n\n// Phone: exactly 10 digits after stripping formatting\nif (data.phone && String(data.phone).trim() !== '') {\n  const digits = String(data.phone).replace(/\\D/g, '');\n  if (digits.length !== 10) {\n    errors.push('phone (must be 10 digits)');\n  }\n}\n\n// Monthly revenue: must be numeric\nif (data.monthlyRevenue && String(data.monthlyRevenue).trim() !== '') {\n  if (isNaN(Number(data.monthlyRevenue))) {\n    errors.push('monthly revenue (must be a number)');\n  }\n}\n\nreturn [{\n  json: {\n    name: data.name,\n    businessName: data.businessName,\n    email: data.email,\n    phone: data.phone,\n    monthlyRevenue: data.monthlyRevenue,\n    valid: errors.length === 0,\n    errors: errors,\n    errorSummary: errors.join(', ')\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        -128
+      ],
+      "id": "13ee0520-818c-4e4c-8de6-aa01acea29e4",
+      "name": "Validate Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ffd516ea-135e-4679-b0c4-1d50692c96e4",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -448,
+        -128
+      ],
+      "id": "16c51778-fe74-466b-be8d-087400ce3113",
+      "name": "Valid Lead?"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "[SPREADSHEET_ID_REDACTED]",
+          "mode": "list",
+          "cachedResultName": "Priya Nambiar",
+          "cachedResultUrl": "[SPREADSHEET_URL_REDACTED]"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "[SPREADSHEET_URL_REDACTED]"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.name }}",
+            "businessname": "={{ $json.businessName }}",
+            "email": "={{ $json.email }}",
+            "phone": "={{ $json.phone }}",
+            "monthlyRevenue": "={{ $json.monthlyRevenue }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "businessname",
+              "displayName": "businessname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "monthlyRevenue",
+              "displayName": "monthlyRevenue",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -224,
+        -224
+      ],
+      "id": "b769b421-ade5-4879-98f8-0ae97282e159",
+      "name": "Write to Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "[CREDENTIAL_ID_REDACTED]",
+          "name": "Google Sheets account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL_REDACTED]",
+        "subject": "=New qualified lead: {{ $('Validate Fields').item.json.name }}",
+        "emailType": "text",
+        "message": "=New lead received and added to your sheet.  Name: {{ $('Validate Fields').item.json.name }} Business: {{ $('Validate Fields').item.json.businessName }} Email: {{ $('Validate Fields').item.json.email }} Phone: {{ $('Validate Fields').item.json.phone }} Monthly Revenue: ${{ $('Validate Fields').item.json.monthlyRevenue }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -320
+      ],
+      "id": "00c23692-3e9a-470d-b01d-1f505ba76747",
+      "name": "Notify: Lead Added",
+      "webhookId": "[WEBHOOK_ID_REDACTED]",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[CREDENTIAL_ID_REDACTED]",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL_REDACTED]",
+        "subject": "=[ACTION REQUIRED] Sheet write failed — {{ $('Validate Fields').item.json.name }}",
+        "emailType": "text",
+        "message": "=A valid lead submission could not be written to Google Sheets. Manual action required.  Lead details: Name: {{ $('Validate Fields').item.json.name }} Business: {{ $('Validate Fields').item.json.businessName }} Email: {{ $('Validate Fields').item.json.email }} Phone: {{ $('Validate Fields').item.json.phone }} Monthly Revenue: ${{ $('Validate Fields').item.json.monthlyRevenue }}  Error: {{ $json.error.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -128
+      ],
+      "id": "4af5b511-1916-424d-8c46-7528d9c06f87",
+      "name": "Alert: Sheet Write Failed",
+      "webhookId": "[WEBHOOK_ID_REDACTED]",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[CREDENTIAL_ID_REDACTED]",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "[EMAIL_REDACTED]",
+        "subject": "Rejected lead submission",
+        "emailType": "text",
+        "message": "=A lead form submission was rejected due to missing or invalid fields.  Failed fields: {{ $('Validate Fields').item.json.errorSummary }}  Raw submission: Name: {{ $('Validate Fields').item.json.name }} Business: {{ $('Validate Fields').item.json.businessName }} Email: {{ $('Validate Fields').item.json.email }} Phone: {{ $('Validate Fields').item.json.phone }} Monthly Revenue: {{ $('Validate Fields').item.json.monthlyRevenue }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -224,
+        -32
+      ],
+      "id": "ed4f9d69-97e9-4da5-86c3-4058d9228504",
+      "name": "Notify: Rejected Lead",
+      "webhookId": "[WEBHOOK_ID_REDACTED]",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "[CREDENTIAL_ID_REDACTED]",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Fields": {
+      "main": [
+        [
+          {
+            "node": "Valid Lead?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Lead?": {
+      "main": [
+        [
+          {
+            "node": "Write to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify: Rejected Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Notify: Lead Added",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert: Sheet Write Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "[VERSION_ID_REDACTED]",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "[INSTANCE_ID_REDACTED]"
+  },
+  "id": "[WORKFLOW_ID_REDACTED]",
+  "tags": []
+}

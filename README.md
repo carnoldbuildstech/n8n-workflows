@@ -71,6 +71,20 @@ Multi-channel tenant request triage system for a 14-property management company.
 - **Built:** Mar 7, 2026
 - **Full details:** [Okafor Triage Project/README.md](Okafor%20Triage%20Project/README.md)
 
+### Priya Nambiar — Lead Validator *(Fictional Client)*
+
+Deterministic lead validation workflow that filters bad form submissions before they hit Google Sheets.
+
+- **Trigger:** Webhook (POST) — name, business name, email, phone, monthly revenue
+- **Flow:** Webhook → Code Node (validate) → IF → two paths
+- **Valid path:** Google Sheets (Append Row) → Gmail success notification
+- **Invalid path:** Gmail rejection notification with specific field list
+- **Error path:** Google Sheets Error Output Pin → Gmail alert on sheet write failure
+- **What it does:** Checks all 5 fields for presence, validates email format (regex), phone length (10 digits), and revenue type (numeric). Clean leads go to the sheet. Bad ones are rejected with a named field list. Sheet write failures trigger an alert — nothing fails silently.
+- **Architectural decision:** Validation uses a Code node, not an LLM. Rules are 100% deterministic — no AI needed, no cost, no non-determinism.
+- **Error handling:** Error Output Pin on the Google Sheets node — confirmed via testing with a broken spreadsheet ID
+- **Built:** April 16, 2026
+
 ### Jerome Atkins — Lawn Care Request Tracker *(Fictional Client)*
 Stateful customer tracking system for a one-man lawn care operation.
 - **Trigger:** Webhook (POST) — customer name, phone, job description
