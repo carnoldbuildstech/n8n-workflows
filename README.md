@@ -123,7 +123,6 @@ Full multi-agent AI communication system for a barbershop — handles FAQs, appo
 Local n8n instance running in Docker — used for learning, testing, and Stage 2 infrastructure practice. Not connected to the n8n Cloud production instance.
 - **Stack:** Windows 11 Pro → WSL 2 (Ubuntu) → Docker Desktop → n8n container
 - **Access:** `http://localhost:5678`
-- **Config:** [docker/n8n/docker-compose.yml](docker/n8n/docker-compose.yml)
 - **Data persistence:** Docker named volume (`n8n_data`) — survives container restarts
 - **Purpose:** Learning sandbox. Production workflows remain on n8n Cloud until a VPS with proper monitoring and recovery plan is in place.
 - **Set up:** Mar 13, 2026
