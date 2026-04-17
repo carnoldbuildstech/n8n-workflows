@@ -86,6 +86,21 @@ Deterministic lead validation workflow that filters bad form submissions before 
 - **Error handling:** Error Output Pin on the Google Sheets node — confirmed via testing with a broken spreadsheet ID
 - **Built:** April 16, 2026 | **Updated:** April 16, 2026 — webhook auth added
 
+### Vanessa Tran — Financial Summary Bot *(Fictional Client)*
+
+AI-powered monthly financial summary email system with output validation before send.
+
+- **Trigger:** Webhook (POST) — clientName, revenue, expenses, netProfit, notableItems
+- **Flow:** Webhook → AI Agent (Groq llama-3.3-70b) → Validate Draft (Code) → Valid Draft? (IF) → two paths
+- **Valid path:** Gmail send to client
+- **Invalid path:** Gmail alert to Vanessa with full draft + error list for manual review
+- **Error path:** Gmail send failure → Error Output Pin → Gmail alert to Vanessa with draft for manual send
+- **What it does:** Drafts a professional financial summary email from structured input data, validates the AI output before anything sends — checks that all three dollar figures appear in the draft, word count is 100–400 words, and no hedging language is present. Bad drafts never reach the client.
+- **Architectural decision:** Output validation is a Code node, not a second AI call. Deterministic rules are cheaper, faster, and more reliable than asking an LLM to check another LLM's work.
+- **Security:** Webhook secured with Header Auth. Client data passed through human turn only — never injected into the system prompt.
+- **Model:** Groq-hosted Llama 3.3 70B — free tier, fast inference, strong instruction-following
+- **Built:** April 17, 2026
+
 ### Jerome Atkins — Lawn Care Request Tracker *(Fictional Client)*
 Stateful customer tracking system for a one-man lawn care operation.
 - **Trigger:** Webhook (POST) — customer name, phone, job description
