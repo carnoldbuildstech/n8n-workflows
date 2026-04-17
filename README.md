@@ -172,6 +172,7 @@ System prompts in workflow JSON files are redacted for security. The workflow ar
 - Tally — Form trigger
 - Tavily — AI search API
 - Telegram — Push notifications (Deal Alert System)
+- Groq — Free cloud inference API for open-source models (Vanessa Tran Financial Summary Bot)
 
 ## About
 Built as part of my transition into AI Workflow Architecture. These are real, working automations — not demos.
