@@ -1,0 +1,276 @@
+{
+  "name": "Vanessa Tran Financial Summary Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vanessa-financial-summary",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -928,
+        -112
+      ],
+      "id": "892ca996-8dc1-4581-8a1a-1c578b0295be",
+      "name": "Webhook",
+      "webhookId": "37a7dbf4-d0d7-409c-b9c8-c5adf1f17cde",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "zPFFyoJzxRPRTCnn",
+          "name": "Vanessa webhook secret"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Draft a financial summary email for the following client:\n\nClient Name: {{ $('Webhook').item.json.body.clientName }}\nRevenue: {{ $('Webhook').item.json.body.revenue }}\nExpenses: {{ $('Webhook').item.json.body.expenses }}\nNet Profit: {{ $('Webhook').item.json.body.netProfit }}\nNotable Items: {{ $('Webhook').item.json.body.notableItems }}\n",
+        "options": {
+          "systemMessage": "[system prompt redacted]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -704,
+        -112
+      ],
+      "id": "d862e6c1-f521-45c5-8595-0cc82ec2eede",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "const draft = $input.first().json.output;\nconst body = $('Webhook').first().json.body ?? $('Webhook').first().json;\n\n// Strip $, commas, and spaces for normalized comparison\nfunction normalize(val) {\n  return String(val).replace(/[$,\\s]/g, '');\n}\n\nconst figures = {\n  revenue: body.revenue,\n  expenses: body.expenses,\n  netProfit: body.netProfit\n};\n\nconst errors = [];\nconst normalizedDraft = normalize(draft);\n\n// Check all three dollar figures appear (normalized)\nfor (const [key, val] of Object.entries(figures)) {\n  if (!normalizedDraft.includes(normalize(val))) {\n    errors.push(`missing figure: ${key} (${val})`);\n  }\n}\n\n// Word count\nconst wordCount = draft.trim().split(/\\s+/).length;\nif (wordCount < 100) errors.push(`too short (${wordCount} words — minimum 100)`);\nif (wordCount > 400) errors.push(`too long (${wordCount} words — maximum 400)`);\n\n// Hedging language\nconst draftLower = draft.toLowerCase();\nconst hedging = ['approximately', 'around', 'i think', 'roughly'];\nfor (const phrase of hedging) {\n  if (draftLower.includes(phrase)) {\n    errors.push(`hedging language: \"${phrase}\"`);\n  }\n}\n\nreturn [{\n  json: {\n    valid: errors.length === 0,\n    errors,\n    errorSummary: errors.join('; '),\n    draft,\n    wordCount,\n    clientName: body.clientName\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        -112
+      ],
+      "id": "ee537448-4f28-499a-8da7-8ca18a38bc88",
+      "name": "Validate Draft"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "87e9a884-3481-4955-bd21-c0fb64440a4c",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -128,
+        -112
+      ],
+      "id": "3cd3d2f4-5768-4358-8f2b-64b00fa4536e",
+      "name": "Valid Draft?"
+    },
+    {
+      "parameters": {
+        "sendTo": "chris.j.arnold95@gmail.com",
+        "subject": "=Monthly Financial Summary — {{ $('Validate Draft').item.json.clientName }}",
+        "emailType": "text",
+        "message": "={{ $('Validate Draft').item.json.draft }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        96,
+        -208
+      ],
+      "id": "ffd1816c-dace-4d30-94cd-2a615b1e28b7",
+      "name": "Send to Client",
+      "webhookId": "3a02a28a-d883-4dc3-986f-e2abe4f4eac3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xu4KOtHWhovjX5ZY",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "carnoldbuildstech@gmail.com",
+        "subject": "=[REVIEW REQUIRED] Financial summary failed validation — {{ $('Validate Draft').item.json.clientName }}",
+        "emailType": "text",
+        "message": "=Validation failed for {{ $('Validate Draft').item.json.clientName }}.\\n\\nErrors:\\n{{ $('Validate Draft').item.json.errorSummary }}\\n\\nDraft for review:\\n\\n{{ $('Validate Draft').item.json.draft }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        96,
+        -16
+      ],
+      "id": "cb659e5b-6052-42a0-a08a-c20a990a084a",
+      "name": "Alert Vanessa - Review Required",
+      "webhookId": "7c7e3e92-b607-44fc-9a1a-bf826d0964ba",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xu4KOtHWhovjX5ZY",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "carnoldbuildstech@gmail.com",
+        "subject": "=[ACTION REQUIRED] Email send failed — {{ $('Validate Draft').item.json.clientName }}",
+        "emailType": "text",
+        "message": "=The financial summary email for {{ $('Validate Draft').item.json.clientName }} failed to send.\\n\\nError: {{ $json.error.message }}\\n\\nDraft (send manually):\\n\\n{{ $('Validate Draft').item.json.draft }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -208
+      ],
+      "id": "63e219b4-90b8-4b29-a976-3ea1adcf5b8c",
+      "name": "Alert Vanessa - Send Failed",
+      "webhookId": "cd3d82a0-8e86-4912-8a84-a83bbcb2533a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "xu4KOtHWhovjX5ZY",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -632,
+        112
+      ],
+      "id": "a7b86649-713c-4d40-93cf-a5ae79eb7d0c",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "xXWZrK0cQ3TvrxSt",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Validate Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Draft": {
+      "main": [
+        [
+          {
+            "node": "Valid Draft?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid Draft?": {
+      "main": [
+        [
+          {
+            "node": "Send to Client",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert Vanessa - Review Required",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Client": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Alert Vanessa - Send Failed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "711f6fe7-3310-482f-a9be-5a1ca4f518c5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4696f2b188137211b7c8297fc168eaa750cbba6b9356efd217ecf75e2ebe835b"
+  },
+  "id": "p2SoSjujaNEkFjeT",
+  "tags": []
+}
